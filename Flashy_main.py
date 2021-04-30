@@ -4,8 +4,6 @@
 import tkinter as tk
 from PIL import ImageTk,Image
 
-homecount = 0
-
 root = tk.Tk()
 root.title("Flashy")
 root.iconbitmap("F.ico")
@@ -33,17 +31,15 @@ def study_set():
 
 def home():
     #creates the home screen
-    global homecount
     clear_screen()
     frame_home.grid(row=0, column=0)
-    if homecount < 1:
-        welcome_label = tk.Label(frame_home, text="Welcome!", font=("Helvetica", 50), fg="white", bg="black")
-        welcome_label.grid(row=0, column=1, columnspan=3, pady=5)
-        button_create = tk.Button(frame_home, text="Create new study set", width=18, height=5, borderwidth=0, font=("Helvetica", 20), command=create_set)
-        button_create.grid(row=1, column=1)
-        start_studying = tk.Button(frame_home, text="Study a set", width=18, height=5, borderwidth=0, font=("Helvetica", 20), command=study_set)
-        start_studying.grid(row=2, column=1, pady=2)
-        homecount += 1
+    welcome_label = tk.Label(frame_home, text="Welcome!", font=("Helvetica", 50), fg="white", bg="black")
+    welcome_label.grid(row=0, column=1, columnspan=3, pady=5)
+    button_create = tk.Button(frame_home, text="Create new study set", width=18, height=5, borderwidth=0, font=("Helvetica", 20), command=create_set)
+    button_create.grid(row=1, column=1)
+    start_studying = tk.Button(frame_home, text="Study a set", width=18, height=5, borderwidth=0, font=("Helvetica", 20), command=study_set)
+    start_studying.grid(row=2, column=1, pady=2)
+ 
 
 
 #all the menu options
