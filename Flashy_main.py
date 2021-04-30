@@ -8,13 +8,18 @@ homecount = 0
 
 root = tk.Tk()
 root.title("Flashy")
+root.iconbitmap("")
+
 w = root.winfo_screenwidth()
 h = root.winfo_screenheight()
 geometry = ("%dx%d" % (w,h))
 root.geometry(geometry)
 
-frame_home = tk.Frame(root)
+root.configure(background="black")
+
+frame_home = tk.Frame(root, bg="black")
 frame_create = tk.Frame(root)
+
 
 def clear_screen():
     #clears the screen
@@ -33,7 +38,7 @@ def home():
     clear_screen()
     frame_home.grid(row=0, column=0)
     if homecount < 1:
-        welcome_label = tk.Label(frame_home, text="Welcome!", font=("Helvetica", 50))
+        welcome_label = tk.Label(frame_home, text="Welcome!", font=("Helvetica", 50), fg="white", bg="black")
         welcome_label.grid(row=0, column=1, columnspan=3, pady=5)
         button_create = tk.Button(frame_home, text="Create new study set", width=18, height=5, borderwidth=5, font=("Helvetica", 20), command=create_set)
         button_create.grid(row=1, column=1)
