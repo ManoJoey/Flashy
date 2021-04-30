@@ -9,7 +9,7 @@ homecount = 0
 root = tk.Tk()
 root.title("Flashy")
 root.iconbitmap("F.ico")
-root.attributes('-disabled', True)
+root.wm_state('zoomed')
 
 root.configure(background="black")
 
