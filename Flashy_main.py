@@ -1,5 +1,6 @@
 #Joey mocht je images willen gebruiken dan moet je command prompt opstarten en "pip install Pillow" zeggen, dan doet hij het
 #En pip install pygame voor mp3's te spelen
+#Menu items moeten gedisabled worden als je in frame_create / frame_study zit (Note to self)
 import tkinter as tk
 from PIL import ImageTk,Image
 from datetime import date
