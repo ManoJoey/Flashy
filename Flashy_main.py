@@ -8,6 +8,8 @@ import time
 
 pygame.mixer.init()
 
+homecount = 0
+
 root = tk.Tk()
 root.title("Flashy")
 root.iconbitmap("F.ico")
@@ -19,6 +21,13 @@ frame_home = tk.Frame(root, bg="black")
 frame_create = tk.Frame(root, bg="black")
 frame_study = tk.Frame(root, bg="black")
 
+def quit_flashy():
+    pygame.mixer.music.load("Mouse Click.mp3")
+    pygame.mixer.music.play(loops=0)
+    time.sleep(0.15)
+    root.quit()
+
+
 
 def clear_screen():
     #clears the screen
@@ -29,32 +38,28 @@ def clear_screen():
 
 def create_set():
     #creates a new study set
+    pygame.mixer.music.load("Mouse Click.mp3")
+    pygame.mixer.music.play(loops=0)
     clear_screen()
     frame_create.grid(row=0, column=0)
 
 
 def study_set():
     #get button with changing title and definition
+    pygame.mixer.music.load("Mouse Click.mp3")
+    pygame.mixer.music.play(loops=0)
     clear_screen()
     frame_study.grid(row=0, column=0)
 
 
-def stopsound():
-    pygame.mixer.music.stop()
-    stop_button.grid_forget()
-
-
-def playsound():
-    global stop_button
-    pygame.mixer.music.load("Curb Your Enthusiasm theme song.mp3")
-    pygame.mixer.music.play(loops=0)
-    stop_button = tk.Button(frame_home, text="Stop", width=26, height=3, borderwidth=0, font=("Helvetica", 15), command=stopsound)
-    stop_button.grid(row=8, column=1, pady=10)
-
-
 def home():
     #creates the home screen
+    global homecount
     clear_screen()
+    if homecount > 0:
+        pygame.mixer.music.load("Mouse Click.mp3")
+        pygame.mixer.music.play(loops=0)
+    homecount += 1
     frame_home.grid(row=0, column=0)
     whitespace = tk.Label(frame_home, text="", bg="black", height=3)
     whitespace.grid(row=0, column=1)
@@ -74,11 +79,8 @@ def home():
     start_studying = tk.Button(frame_home, text="Study a set", width=18, height=4, borderwidth=0, font=("Helvetica", 20), command=study_set)
     start_studying.grid(row=5, column=1, pady=2)
 
-    exit_button = tk.Button(frame_home, text="Exit", width=26, height=3, borderwidth=0, font=("Helvetica", 15), command=root.quit)
+    exit_button = tk.Button(frame_home, text="Exit", width=26, height=3, borderwidth=0, font=("Helvetica", 15), command=quit_flashy)
     exit_button.grid(row=6, column=1, pady=100)
-
-    play_sound = tk.Button(frame_home, text="Play sound", width=26, height=3, borderwidth=0, font=("Helvetica", 15), command=playsound)
-    play_sound.grid(row=7, column=1)
 
 
 #all the menu options
@@ -87,7 +89,7 @@ root.config(menu=menu)
 menu.add_command(label="Home", command=home)
 menu.add_command(label="Create set", command=create_set)
 menu.add_command(label="Study set", command=study_set)
-menu.add_command(label="Exit", command=root.quit)
+menu.add_command(label="Exit", command=quit_flashy)
 
 
 home()
