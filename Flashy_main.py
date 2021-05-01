@@ -1,8 +1,12 @@
 #Joey mocht je images willen gebruiken dan moet je command prompt opstarten en "pip install Pillow" zeggen, dan doet hij het
+#En pip install pygame voor mp3's te spelen
 import tkinter as tk
 from PIL import ImageTk,Image
 from datetime import date
 import pygame
+import time
+
+pygame.mixer.init()
 
 root = tk.Tk()
 root.title("Flashy")
@@ -34,12 +38,18 @@ def study_set():
     clear_screen()
     frame_study.grid(row=0, column=0)
 
-pygame.mixer.init()
+
+def stopsound():
+    pygame.mixer.music.stop()
+    stop_button.grid_forget()
 
 
 def playsound():
-    pygame.mixer.music.load("")
-
+    global stop_button
+    pygame.mixer.music.load("Curb Your Enthusiasm theme song.mp3")
+    pygame.mixer.music.play(loops=0)
+    stop_button = tk.Button(frame_home, text="Stop", width=26, height=3, borderwidth=0, font=("Helvetica", 15), command=stopsound)
+    stop_button.grid(row=8, column=1, pady=10)
 
 
 def home():
