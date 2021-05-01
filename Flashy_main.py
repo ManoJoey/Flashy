@@ -7,16 +7,19 @@ root = tk.Tk()
 root.title("Flashy")
 root.iconbitmap("F.ico")
 root.wm_state('zoomed')
-
 root.configure(background="black")
 
+
 frame_home = tk.Frame(root, bg="black")
-frame_create = tk.Frame(root)
+frame_create = tk.Frame(root, bg="black")
+frame_study = tk.Frame(root, bg="black")
 
 
 def clear_screen():
     #clears the screen
     frame_home.grid_forget()
+    frame_create.grid_forget()
+    frame_study.grid_forget()
 
 
 def create_set():
@@ -24,9 +27,11 @@ def create_set():
     clear_screen()
     frame_create.grid(row=0, column=0)
 
+
 def study_set():
     #get button with changing title and definition
-    pass
+    clear_screen()
+    frame_study.grid(row=0, column=0)
 
 
 def home():
@@ -55,12 +60,12 @@ def home():
     exit_button.grid(row=6, column=1, pady=100)
 
 
-
 #all the menu options
 menu = tk.Menu(root)
 root.config(menu=menu)
 menu.add_command(label="Home", command=home)
 menu.add_command(label="Create set", command=create_set)
+menu.add_command(label="Study set", command=study_set)
 menu.add_command(label="Exit", command=root.quit)
 
 
