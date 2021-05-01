@@ -2,6 +2,7 @@
 import tkinter as tk
 from PIL import ImageTk,Image
 from datetime import date
+import pygame
 
 root = tk.Tk()
 root.title("Flashy")
@@ -33,6 +34,13 @@ def study_set():
     clear_screen()
     frame_study.grid(row=0, column=0)
 
+pygame.mixer.init()
+
+
+def playsound():
+    pygame.mixer.music.load("")
+
+
 
 def home():
     #creates the home screen
@@ -58,6 +66,9 @@ def home():
 
     exit_button = tk.Button(frame_home, text="Exit", width=26, height=3, borderwidth=0, font=("Helvetica", 15), command=root.quit)
     exit_button.grid(row=6, column=1, pady=100)
+
+    play_sound = tk.Button(frame_home, text="Play sound", width=26, height=3, borderwidth=0, font=("Helvetica", 15), command=playsound)
+    play_sound.grid(row=7, column=1)
 
 
 #all the menu options
