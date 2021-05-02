@@ -2,11 +2,15 @@ import tkinter as tk
 from PIL import ImageTk,Image
 from datetime import date
 import pygame
-import time
 
 pygame.mixer.init()
 
 homecount = 0
+y = 2
+VisitCreateCount = 0
+screenheightcount = 50
+list_entries = []
+list_entries_solid = []
 
 root = tk.Tk()
 root.title("Flashy")
@@ -24,8 +28,7 @@ frame_image_side2 = tk.Frame(root, bg="black", width=750, height=996, borderwidt
 def quit_flashy():
     pygame.mixer.music.load("Minecraft hurt.mp3")
     pygame.mixer.music.play(loops=0)
-    time.sleep(0.2)
-    root.quit()
+    root.after(200, root.quit())
 
 def clear_screen():
     #clears the screen
@@ -37,17 +40,58 @@ def clear_screen():
 
 
 def done_creating():
-    pass
+    pygame.mixer.music.load("Party horn.mp3")
+    pygame.mixer.music.play(loops=0)
+    clear_screen()
 
 
-def term_entered():
-    term_entry.delete(0, tk.END)
-    definition_entry.delete(0, tk.END)
+def next_page():
+    global screenheightcount
+    clear_screen()
+    for entry in list_entries:
+        list_entries_solid.append(entry)
+        if list_entries_solid.count(entry) == 2:
+            list_entries_solid.pop(-1)
+        entry.destroy()
+    screenheightcount = 0
+
+    next_page_term = tk.Entry(frame_create, width=75, borderwidth=0, bg="#4c8151")
+    next_page_definition = tk.Entry(frame_create, width=75, borderwidth=0, bg="#4c8151")
+    next_page_term.grid(row=1, column=0, padx=20)
+    next_page_definition.grid(row=1, column=1, padx=85, pady=25)
+
+    list_entries.append(next_page_term)
+    list_entries.append(next_page_definition)
+
+    frame_create.grid(row=0, column=0)
+
+def add_term():
+    global y, padcount, screenheightcount
+    pygame.mixer.music.load("Swipe.mp3")
+    pygame.mixer.music.play(loops=0)
+
+    new_entry_term = tk.Entry(frame_create, width=75, borderwidth=0, bg="#4c8151")
+    new_entry_term.grid(row=y, column=0, pady=25, padx=20)
+
+    new_entry_definition = tk.Entry(frame_create, width=75, borderwidth=0, bg="#4c8151")
+    new_entry_definition.grid(row=y, column=1, pady=25, padx=85)
+
+    list_entries.append(new_entry_term)
+    list_entries.append(new_entry_definition)
+
+    create_set_done.grid_configure(row=y+2)
+    new_term.grid_configure(row=y+2)
+
+    y += 1
+    screenheightcount += 78
+
+    if screenheightcount > root.winfo_screenheight():
+        next_page()
 
 
 def create_set():
     #creates a new study set
-    global term_entry, definition_entry
+    global term_entry, definition_entry, new_term, create_set_done, VisitCreateCount
 
     main_menu.entryconfig("Home", state="active")
     main_menu.entryconfig("Create set", state="disabled")
@@ -59,20 +103,31 @@ def create_set():
     clear_screen()
     
     frame_create.grid(row=0, column=0)
+    
+    term_label = tk.Label(frame_create, text="Term:", bg="black", fg="#4c8151", font=("Helvetica", 20))
+    term_label.grid(row=0, column=0, stick=tk.W, padx=20, pady=10)
 
-    term_definition = tk.Label(frame_create, text="Term:                                   Definition:", bg="black", fg="#4c8151", font=("Helvetica", 30))
-    term_definition.place(x=17, y=5)
+    definition_label = tk.Label(frame_create, text="Definition:", bg="black", fg="#4c8151", font=("Helvetica", 20))
+    definition_label.grid(row=0, column=1, stick=tk.W, padx=80, pady=10)
 
     term_entry = tk.Entry(frame_create, width=75, borderwidth=0, bg="#4c8151")
-    term_entry.grid(row=1, column=0, pady=70, padx=20)
+    term_entry.grid(row=1, column=0, padx=20)
     
     definition_entry = tk.Entry(frame_create, width=75, borderwidth=0, bg="#4c8151")
-    definition_entry.grid(row=1, column=1, pady=70, padx=20)
+    definition_entry.grid(row=1, column=1, padx=85, pady=25)
 
-    root.bind("<Return>", lambda event: term_entered())
+    list_entries.append(term_entry)
+    list_entries.append(definition_entry)
 
-    create_set_done = tk.Button(frame_create, text="Done", command=done_creating, width=10, height=2, bg="#4c8151", borderwidth=0)
-    create_set_done.grid(row=2, column=1, sticky=tk.E)
+    new_term = tk.Button(frame_create, text="Add term", command=add_term, width=10, height=2, bg="#4c8151", borderwidth=0, font=("Helvetica", 15))
+    new_term.grid(row=2, column=0, sticky=tk.W, padx=20, pady=25)
+    root.bind("<Return>", lambda event: add_term())
+
+
+    create_set_done = tk.Button(frame_create, text="Done", command=done_creating, width=10, height=2, bg="#4c8151", borderwidth=0, font=("Helvetica", 15))
+    create_set_done.grid(row=2, column=1, sticky=tk.E, padx=88)
+
+    VisitCreateCount += 1
 
 
 def study_set():
@@ -100,10 +155,21 @@ def home():
     main_menu.entryconfig("Create set", state="active")
 
     clear_screen()
+
     if homecount > 0:
         pygame.mixer.music.load("Mouse Click.mp3")
         pygame.mixer.music.play(loops=0)
     homecount += 1
+
+    for entry in list_entries:
+        list_entries_solid.append(entry)
+        if list_entries_solid.count(entry) == 2:
+            list_entries_solid.pop(-1)
+        entry.destroy()
+    
+    if VisitCreateCount > 0:
+        new_term.destroy()
+        create_set_done.destroy()
 
     frame_image_side.grid(row=0, column=0)
     frame_home.grid(row=0, column=1)
@@ -149,7 +215,6 @@ big_f_label.grid(row=0, column=0)
 big_f2 = tk.PhotoImage(file="Flashy full.png")
 big_f_label2 = tk.Label(frame_image_side2, image=big_f2, bg="black")
 big_f_label2.grid(row=0, column=0)
-
 
 root.grid_columnconfigure(0, weight=1)
 
