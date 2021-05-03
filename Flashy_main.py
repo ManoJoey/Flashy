@@ -124,10 +124,10 @@ def add_term():
     pygame.mixer.music.play(loops=0)
 
     new_entry_term = tk.Entry(second_frame, width=75, borderwidth=0, bg="#4c8151")
-    new_entry_term.grid(row=y, column=0, pady=20, padx=20)
+    new_entry_term.grid(row=y+1, column=0, pady=20, padx=20)
 
     new_entry_definition = tk.Entry(second_frame, width=75, borderwidth=0, bg="#4c8151")
-    new_entry_definition.grid(row=y, column=1, pady=20, padx=85)
+    new_entry_definition.grid(row=y+1, column=1, pady=20, padx=85)
 
     list_entries.append(new_entry_term)
     list_entries.append(new_entry_definition)
@@ -139,9 +139,31 @@ def reset_scrollregion(self):
     create_canvas.configure(scrollregion=create_canvas.bbox("all"))
 
 def on_mousewheel(event):
+    #allows you to scroll
     create_canvas.yview_scroll(int(-1*(event.delta/120)), "units")
 
 def create_set():
+    #creates a new study set
+    global term_entry, definition_entry, new_term, create_set_done, VisitCreateCount, title_entry
+
+    pygame.mixer.music.load("Mouse Click.mp3")
+    pygame.mixer.music.play(loops=0)
+
+    main_menu.entryconfig("Home", state="active")
+    main_menu.entryconfig("Study set", state="disabled")
+    main_menu.entryconfig("Create set", state="disabled")
+
+    clear_screen()
+
+    frame_create.grid(row=1, column=0, sticky=tk.W)
+    frame_create2.grid(row=1, column=0, sticky=tk.W)
+    title_frame.grid(row=0, column=0, sticky=tk.W)
+
+    create_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
+
+    scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+    create_canvas.configure(yscrollcommand=scrollbar.set)
     create_canvas.configure(scrollregion=create_canvas.bbox("all"))
     create_canvas.bind_all("<MouseWheel>", on_mousewheel)
 
@@ -150,7 +172,6 @@ def create_set():
     second_frame.bind("<Configure>", reset_scrollregion)
 
     frame_buttons_create.grid(row=2, column=0)
-
 
     title_label = tk.Label(title_frame, text="Title:", bg="black", fg="#4c8151", font=("Helvetica", 20))
     title_label.grid(row=0, column=0, stick=tk.W, padx=20, pady=5)
