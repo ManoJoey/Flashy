@@ -179,7 +179,8 @@ def create_set():
     first_entry_definition = tk.Entry(second_frame, width=75, borderwidth=0, bg="#4c8151")
     first_entry_definition.grid(row=y, column=1, pady=20, padx=85)
 
-    list_entries.append(first_entry_term + first_entry_definition)
+    list_entries.append(first_entry_term)
+    list_entries.append(first_entry_definition)
 
     VisitCreateCount += 1
 
