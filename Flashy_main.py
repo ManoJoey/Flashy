@@ -86,13 +86,13 @@ def clear_screen():
     frame_image_side2.grid_forget()
 
 
-def done_creating():
+def done_creating(title_set):
     global write_list
     list_terms = []
     list_def = []
     term = True
     count = -1
-    list_needed = list_entries + list_entries_solid
+    list_needed = list_entries
     for entry in list_needed:
         if term:
             add_term = entry.get()
@@ -142,28 +142,7 @@ def on_mousewheel(event):
     create_canvas.yview_scroll(int(-1*(event.delta/120)), "units")
 
 def create_set():
-    #creates a new study set
-    global term_entry, definition_entry, new_term, create_set_done, VisitCreateCount, title_entry
-
-    main_menu.entryconfig("Home", state="active")
-    main_menu.entryconfig("Create set", state="disabled")
-    main_menu.entryconfig("Study set", state="disabled")
-
-    pygame.mixer.music.load("Mouse Click.mp3")
-    pygame.mixer.music.play(loops=0)
-
-    clear_screen()
-
-    frame_create.grid(row=1, column=0, sticky=tk.W)
-    frame_create2.grid(row=1, column=0, sticky=tk.W)
-    title_frame.grid(row=0, column=0, sticky=tk.W)
-
-    create_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
-
-    scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-
-    create_canvas.configure(yscrollcommand=scrollbar.set)
-    create_canvas.bind("<Configure>", lambda event: create_canvas.configure(scrollregion=create_canvas.bbox("all")))
+    create_canvas.configure(scrollregion=create_canvas.bbox("all"))
     create_canvas.bind_all("<MouseWheel>", on_mousewheel)
 
     create_canvas.create_window((0,0), window=second_frame, anchor="nw")
@@ -189,7 +168,7 @@ def create_set():
     new_term.grid(row=3, column=0, sticky="w", padx=20, pady=25)
     root.bind("<Return>", lambda event: add_term())
 
-    create_set_done = tk.Button(frame_buttons_create, text="Done", command=done_creating, width=10, height=2, bg="#4c8151", borderwidth=0, font=("Helvetica", 15))
+    create_set_done = tk.Button(frame_buttons_create, text="Done", command=lambda:done_creating(title_entry.get()), width=10, height=2, bg="#4c8151", borderwidth=0, font=("Helvetica", 15))
     create_set_done.grid(row=3, column=1, sticky="e", padx=850)
 
     frame_image_side2.grid(row=1, column=0, sticky=tk.E)
