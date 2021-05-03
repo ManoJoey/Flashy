@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter import messagebox
 from PIL import ImageTk,Image
 from datetime import date
 import pygame
@@ -67,7 +68,7 @@ frame_image_side2 = tk.Frame(root, bg="black", width=750, height=996, borderwidt
 
 frame_create2 = tk.Frame(frame_create, bg="white")
 title_frame = tk.Frame(frame_create, bg="black")
-create_canvas = tk.Canvas(frame_create2, bg="black", width=1119, height=780)
+create_canvas = tk.Canvas(frame_create2, bg="black", width=1140, height=780)
 second_frame = tk.Frame(create_canvas, bg="black")
 frame_buttons_create = tk.Frame(frame_create, bg="black")
 scrollbar = ttk.Scrollbar(frame_create2, orient=tk.VERTICAL, command=create_canvas.yview)
@@ -115,8 +116,13 @@ def done_creating(title_set):
     clear_screen()
 
 
-def next_page():
-    pass
+def on_click(selected_entry):
+    try:
+        int(selected_entry.get())
+        selected_entry.delete(0, tk.END)
+    except:
+        pass
+
 
 def add_term():
     global y, padcount
@@ -126,11 +132,16 @@ def add_term():
     new_entry_term = tk.Entry(second_frame, width=75, borderwidth=0, bg="#4c8151")
     new_entry_term.grid(row=y+1, column=0, pady=20, padx=20)
 
+    new_entry_term.insert(0, y)
+    new_entry_term.bind("<Button-1>", lambda event: on_click(new_entry_term))
+    new_entry_term.bind("<FocusIn>", lambda event: on_click(new_entry_term))
+
     new_entry_definition = tk.Entry(second_frame, width=75, borderwidth=0, bg="#4c8151")
     new_entry_definition.grid(row=y+1, column=1, pady=20, padx=85)
 
     list_entries.append(new_entry_term)
     list_entries.append(new_entry_definition)
+
 
     y += 1
 
@@ -183,7 +194,7 @@ def create_set():
     term_label.grid(row=1, column=0, stick=tk.W, padx=20, pady=10)
 
     definition_label = tk.Label(title_frame, text="Definition:", bg="black", fg="#4c8151", font=("Helvetica", 20))
-    definition_label.grid(row=1, column=1, stick=tk.W, padx=80, pady=10)
+    definition_label.grid(row=1, column=1, stick=tk.W, pady=10)
 
     new_term = tk.Button(frame_buttons_create, text="Add term", command=add_term, width=10, height=2, bg="#4c8151", borderwidth=0, font=("Helvetica", 15))
     new_term.grid(row=3, column=0, sticky="w", padx=20, pady=25)
@@ -196,6 +207,10 @@ def create_set():
 
     first_entry_term = tk.Entry(second_frame, width=75, borderwidth=0, bg="#4c8151")
     first_entry_term.grid(row=y, column=0, pady=20, padx=20)
+
+    first_entry_term.insert(0, "1")
+    first_entry_term.bind("<Button-1>", lambda event: on_click(first_entry_term))
+    first_entry_term.bind("<FocusIn>", lambda event: on_click(first_entry_term))
 
     first_entry_definition = tk.Entry(second_frame, width=75, borderwidth=0, bg="#4c8151")
     first_entry_definition.grid(row=y, column=1, pady=20, padx=85)
