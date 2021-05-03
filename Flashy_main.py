@@ -19,9 +19,18 @@ class Term:
         self.term = x[0]
         self.definition = x[1]
 
-def writefile():
-    file_write = open("test.txt", "a")
-    file_delete = open("test.txt", "w")
+def read_file(file_name):
+    file_name_to_open = file_name + ".txt"
+    file_ = open(file_name_to_open, "r")
+    for item in file_:
+        read_list.append(item)
+    file_.close()
+
+def writefile(file_name):
+    file_write_to_open = file_name + ".txt"
+    file_delete_to_open = file_name + ".txt"
+    file_write = open(file_write_to_open, "a")
+    file_delete = open(file_delete_to_open, "w")
     file_delete.write("")
     for item in write_list:
         item = str(item) + "\n"
@@ -33,6 +42,7 @@ homecount = 0
 y = 2
 VisitCreateCount = 0
 write_list = []
+read_list = []
 screenheightcount = 50
 list_entries = []
 list_entries_solid = []
@@ -85,7 +95,7 @@ def done_creating():
         set_v = Term(list_terms[count], list_def[count])
         line = t.fullstring(set_v)
         write_list.append(line)
-    writefile()
+    writefile("test")
     pygame.mixer.music.load("Party horn.mp3")
     pygame.mixer.music.play(loops=0)
     clear_screen()
