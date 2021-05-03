@@ -262,13 +262,26 @@ main_menu.add_command(label="Exit", command=quit_flashy)
 
 home()
 
-big_f = tk.PhotoImage(file="F.png")
-big_f_label = tk.Label(frame_image_side, image=big_f, bg="black")
-big_f_label.grid(row=0, column=0)
+ImageWidthVariable = 1980 / 700
+round(ImageWidthVariable, 8)
+WidthImage = root.winfo_screenwidth() / ImageWidthVariable
 
-big_f2 = tk.PhotoImage(file="Flashy full.png")
-big_f_label2 = tk.Label(frame_image_side2, image=big_f2, bg="black")
-big_f_label2.grid(row=0, column=0)
+if root.winfo_screenwidth() > 1500:
+
+    image1 = Image.open("F.png")
+    image1 = image1.resize((int(WidthImage), 700), Image.ANTIALIAS)
+
+    big_f = ImageTk.PhotoImage(image1)
+    big_f_label = tk.Label(frame_image_side, image=big_f, bg="black")
+    big_f_label.grid(row=0, column=0)
+
+
+    image2 = Image.open("Flashy full.png")
+    image2 = image2.resize((int(WidthImage), 700), Image.ANTIALIAS)
+
+    big_f2 = ImageTk.PhotoImage(image2)
+    big_f_label2 = tk.Label(frame_image_side2, image=big_f2, bg="black")
+    big_f_label2.grid(row=0, column=0)
 
 root.grid_columnconfigure(0, weight=1)
 
