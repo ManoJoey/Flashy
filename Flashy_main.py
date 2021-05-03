@@ -8,9 +8,50 @@ pygame.mixer.init()
 homecount = 0
 y = 2
 VisitCreateCount = 0
+write_list = []
+read_list = []
 screenheightcount = 50
 list_entries = []
 list_entries_solid = []
+title_set = ""
+
+class Term:
+    def __init__(self, term, definition):
+        self.term = term
+        self.definition = definition
+    
+    def fullstring(self):
+        full_string = self.term + " | " + self.definition
+        return full_string
+
+    def split_line(self, line):
+        x = line.split(" | ")
+        self.term = x[0]
+        self.definition = x[1]
+
+def read_file(file_name):
+    file_name_to_open = file_name + ".txt"
+    file_ = open(file_name_to_open, "r")
+    for item in file_:
+        if "\n" in item:
+            read_list.append(item.replace("\n", ""))
+        else:
+            read_list.append(item)
+    file_.close()
+
+def writefile(file_name):
+    file_write_to_open = file_name + ".txt"
+    file_delete_to_open = file_name + ".txt"
+    file_write = open(file_write_to_open, "a")
+    file_delete = open(file_delete_to_open, "w")
+    file_delete.write("")
+    for item in write_list:
+        item = str(item) + "\n"
+        file_write.write(item)
+    file_write.close()
+    file_delete.close()
+
+
 
 root = tk.Tk()
 root.title("Flashy")
@@ -40,6 +81,29 @@ def clear_screen():
 
 
 def done_creating():
+    global write_list
+    list_terms = []
+    list_def = []
+    term = True
+    count = -1
+    list_needed = list_entries + list_entries_solid
+    for entry in list_needed:
+        if term:
+            add_term = entry.get()
+            list_terms.append(add_term)
+            term = not term
+        else:
+            add_def = entry.get()
+            list_def.append(add_def)
+            term = not term
+    for item in list_terms:
+        count += 1
+        t = Term
+        set_v = Term(list_terms[count], list_def[count])
+        line = t.fullstring(set_v)
+        write_list.append(line)
+    title_set = title_entry.get()
+    writefile(title_set)
     pygame.mixer.music.load("Party horn.mp3")
     pygame.mixer.music.play(loops=0)
     clear_screen()
@@ -91,7 +155,7 @@ def add_term():
 
 def create_set():
     #creates a new study set
-    global term_entry, definition_entry, new_term, create_set_done, VisitCreateCount
+    global term_entry, definition_entry, new_term, create_set_done, VisitCreateCount, title_entry
 
     main_menu.entryconfig("Home", state="active")
     main_menu.entryconfig("Create set", state="disabled")
@@ -101,9 +165,15 @@ def create_set():
     pygame.mixer.music.play(loops=0)
 
     clear_screen()
-    
+
     frame_create.grid(row=0, column=0)
     
+    title_label = tk.Label(frame_create, text="Title:", bg="black", fg="#4c8151", font=("Helvetica", 20))
+    title_label.grid(????)
+
+    title_entry = tk.Entry(frame_create, width=? , borderwidth=3, bg="#4c8151")
+    title_entry.grid(????)
+
     term_label = tk.Label(frame_create, text="Term:", bg="black", fg="#4c8151", font=("Helvetica", 20))
     term_label.grid(row=0, column=0, stick=tk.W, padx=20, pady=10)
 
