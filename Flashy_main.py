@@ -124,10 +124,10 @@ def add_term():
     pygame.mixer.music.play(loops=0)
 
     new_entry_term = tk.Entry(second_frame, width=75, borderwidth=0, bg="#4c8151")
-    new_entry_term.grid(row=y+1, column=0, pady=20, padx=20)
+    new_entry_term.grid(row=y, column=0, pady=20, padx=20)
 
     new_entry_definition = tk.Entry(second_frame, width=75, borderwidth=0, bg="#4c8151")
-    new_entry_definition.grid(row=y+1, column=1, pady=20, padx=85)
+    new_entry_definition.grid(row=y, column=1, pady=20, padx=85)
 
     list_entries.append(new_entry_term)
     list_entries.append(new_entry_definition)
@@ -162,7 +162,7 @@ def create_set():
     term_label.grid(row=1, column=0, stick=tk.W, padx=20, pady=10)
 
     definition_label = tk.Label(title_frame, text="Definition:", bg="black", fg="#4c8151", font=("Helvetica", 20))
-    definition_label.grid(row=1, column=1, stick=tk.W, pady=10)
+    definition_label.grid(row=1, column=1, stick=tk.W, padx=80, pady=10)
 
     new_term = tk.Button(frame_buttons_create, text="Add term", command=add_term, width=10, height=2, bg="#4c8151", borderwidth=0, font=("Helvetica", 15))
     new_term.grid(row=3, column=0, sticky="w", padx=20, pady=25)
@@ -179,8 +179,7 @@ def create_set():
     first_entry_definition = tk.Entry(second_frame, width=75, borderwidth=0, bg="#4c8151")
     first_entry_definition.grid(row=y, column=1, pady=20, padx=85)
 
-    list_entries.append(first_entry_term)
-    list_entries.append(first_entry_definition)
+    list_entries.append(first_entry_term + first_entry_definition)
 
     VisitCreateCount += 1
 
@@ -262,23 +261,13 @@ main_menu.add_command(label="Exit", command=quit_flashy)
 
 home()
 
-WidthVariable = round(1920/700, 8)
-ImageWidth = round(root.winfo_screenwidth() / WidthVariable)
-
-image1 = Image.open("F.png")
-image1 = image1.resize((700, ImageWidth), Image.ANTIALIAS)
-
-image2 = Image.open("Flashy full.png")
-image2 = image2.resize((700, ImageWidth), Image.ANTIALIAS)
-
-big_f = ImageTk.PhotoImage(image1)
+big_f = tk.PhotoImage(file="F.png")
 big_f_label = tk.Label(frame_image_side, image=big_f, bg="black")
 big_f_label.grid(row=0, column=0)
 
-big_f2 = ImageTk.PhotoImage(image2)
+big_f2 = tk.PhotoImage(file="Flashy full.png")
 big_f_label2 = tk.Label(frame_image_side2, image=big_f2, bg="black")
 big_f_label2.grid(row=0, column=0)
-
 
 root.grid_columnconfigure(0, weight=1)
 
