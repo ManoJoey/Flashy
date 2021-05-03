@@ -64,11 +64,13 @@ frame_create = tk.Frame(root, bg="black")
 frame_study = tk.Frame(root, bg="black")
 frame_image_side = tk.Frame(root, bg="black", width=750, height=996, borderwidth=0)
 frame_image_side2 = tk.Frame(root, bg="black", width=750, height=996, borderwidth=0)
-title_frame = tk.Frame(root, bg="black")
-create_canvas = tk.Canvas(frame_create, bg="black")
+
+frame_create2 = tk.Frame(frame_create, bg="white")
+title_frame = tk.Frame(frame_create, bg="black")
+create_canvas = tk.Canvas(frame_create2, bg="black", width=1119, height=780)
 second_frame = tk.Frame(create_canvas, bg="black")
-frame_buttons_create = tk.Frame(root, bg="black")
-scrollbar = ttk.Scrollbar(frame_create, orient=tk.VERTICAL, command=create_canvas.yview)
+frame_buttons_create = tk.Frame(frame_create, bg="black")
+scrollbar = ttk.Scrollbar(frame_create2, orient=tk.VERTICAL, command=create_canvas.yview)
 
 def quit_flashy():
     pygame.mixer.music.load("Minecraft hurt.mp3")
@@ -82,10 +84,6 @@ def clear_screen():
     frame_study.grid_forget()
     frame_image_side.grid_forget()
     frame_image_side2.grid_forget()
-    title_frame.pack_forget()
-    create_canvas.pack_forget()
-    second_frame.pack_forget()
-    frame_buttons_create.pack_forget()
 
 
 def done_creating():
@@ -122,20 +120,26 @@ def next_page():
 
 def add_term():
     global y, padcount
-    #pygame.mixer.music.load("Swipe.mp3")
-    #pygame.mixer.music.play(loops=0)
+    pygame.mixer.music.load("Swipe.mp3")
+    pygame.mixer.music.play(loops=0)
 
     new_entry_term = tk.Entry(second_frame, width=75, borderwidth=0, bg="#4c8151")
-    new_entry_term.grid(row=y, column=0, pady=25, padx=20)
+    new_entry_term.grid(row=y, column=0, pady=20, padx=20)
 
     new_entry_definition = tk.Entry(second_frame, width=75, borderwidth=0, bg="#4c8151")
-    new_entry_definition.grid(row=y, column=1, pady=25, padx=85)
+    new_entry_definition.grid(row=y, column=1, pady=20, padx=85)
 
     list_entries.append(new_entry_term)
     list_entries.append(new_entry_definition)
 
     y += 1
 
+
+def reset_scrollregion(self):
+    create_canvas.configure(scrollregion=create_canvas.bbox("all"))
+
+def on_mousewheel(event):
+    create_canvas.yview_scroll(int(-1*(event.delta/120)), "units")
 
 def create_set():
     #creates a new study set
@@ -150,8 +154,9 @@ def create_set():
 
     clear_screen()
 
-    title_frame.pack(anchor="w")
-    frame_create.pack(fill=tk.BOTH, expand=1)
+    frame_create.grid(row=1, column=0, sticky=tk.W)
+    frame_create2.grid(row=1, column=0, sticky=tk.W)
+    title_frame.grid(row=0, column=0, sticky=tk.W)
 
     create_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
 
@@ -159,17 +164,19 @@ def create_set():
 
     create_canvas.configure(yscrollcommand=scrollbar.set)
     create_canvas.bind("<Configure>", lambda event: create_canvas.configure(scrollregion=create_canvas.bbox("all")))
+    create_canvas.bind_all("<MouseWheel>", on_mousewheel)
 
     create_canvas.create_window((0,0), window=second_frame, anchor="nw")
 
+    second_frame.bind("<Configure>", reset_scrollregion)
 
-    frame_buttons_create.pack(anchor="w")
+    frame_buttons_create.grid(row=2, column=0)
 
 
     title_label = tk.Label(title_frame, text="Title:", bg="black", fg="#4c8151", font=("Helvetica", 20))
     title_label.grid(row=0, column=0, stick=tk.W, padx=20, pady=5)
 
-    title_entry = tk.Entry(title_frame, width=50, borderwidth=0, bg="#4c8151")
+    title_entry = tk.Entry(title_frame, width=62, borderwidth=0, bg="#4c8151")
     title_entry.grid(row=0, column=0, padx=100)
 
     term_label = tk.Label(title_frame, text="Term:", bg="black", fg="#4c8151", font=("Helvetica", 20))
@@ -178,16 +185,24 @@ def create_set():
     definition_label = tk.Label(title_frame, text="Definition:", bg="black", fg="#4c8151", font=("Helvetica", 20))
     definition_label.grid(row=1, column=1, stick=tk.W, padx=80, pady=10)
 
-
     new_term = tk.Button(frame_buttons_create, text="Add term", command=add_term, width=10, height=2, bg="#4c8151", borderwidth=0, font=("Helvetica", 15))
     new_term.grid(row=3, column=0, sticky="w", padx=20, pady=25)
     root.bind("<Return>", lambda event: add_term())
 
     create_set_done = tk.Button(frame_buttons_create, text="Done", command=done_creating, width=10, height=2, bg="#4c8151", borderwidth=0, font=("Helvetica", 15))
-    create_set_done.grid(row=3, column=1, sticky="e", padx=1630)
+    create_set_done.grid(row=3, column=1, sticky="e", padx=850)
+
+    frame_image_side2.grid(row=1, column=0, sticky=tk.E)
+
+    first_entry_term = tk.Entry(second_frame, width=75, borderwidth=0, bg="#4c8151")
+    first_entry_term.grid(row=y, column=0, pady=20, padx=20)
+
+    first_entry_definition = tk.Entry(second_frame, width=75, borderwidth=0, bg="#4c8151")
+    first_entry_definition.grid(row=y, column=1, pady=20, padx=85)
+
+    list_entries.append(first_entry_term + first_entry_definition)
 
     VisitCreateCount += 1
-
 
 def study_set():
     #get button with changing title and definition
