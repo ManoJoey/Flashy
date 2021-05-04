@@ -1,6 +1,0 @@
-Ik zeg nu overal
-for entry in list_entries:
-    entry.destroy()
-om het de 'geloopte' entries van het scherm af te halen, maar het haalt ze natuurlijk ook uit de lijst en dat moet niet
-
-Vm is het nu gefixt maar kijk jij nog maar even (regel 51-55 en regel 164-168)
