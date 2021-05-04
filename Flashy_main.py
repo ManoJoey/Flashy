@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter import messagebox
 from PIL import ImageTk,Image
 from datetime import date
 import pygame
@@ -65,6 +66,7 @@ frame_create = tk.Frame(root, bg="black")
 frame_study = tk.Frame(root, bg="black")
 frame_image_side = tk.Frame(root, bg="black", width=750, height=996, borderwidth=0)
 frame_image_side2 = tk.Frame(root, bg="black", width=750, height=996, borderwidth=0)
+frame_image_create = tk.Frame(root, bg="black", width=750, height=996, borderwidth=0)
 
 
 def quit_flashy():
@@ -79,35 +81,39 @@ def clear_screen():
     frame_study.grid_forget()
     frame_image_side.grid_forget()
     frame_image_side2.grid_forget()
+    frame_image_create.grid_forget()
 
 
 def done_creating(title_set):
-    global write_list
-    list_terms = []
-    list_def = []
-    term = True
-    count = -1
-    list_needed = list_entries
-    for entry in list_needed:
-        if term:
-            add_term = entry.get()
-            list_terms.append(add_term)
-            term = not term
-        else:
-            add_def = entry.get()
-            list_def.append(add_def)
-            term = not term
-    for item in list_terms:
-        count += 1
-        t = Term
-        set_v = Term(list_terms[count], list_def[count])
-        line = t.fullstring(set_v)
-        write_list.append(line)
-    title_set = title_entry.get()
-    writefile(title_set)
-    pygame.mixer.music.load("Party horn.mp3")
-    pygame.mixer.music.play(loops=0)
-    clear_screen()
+    if title_set != "Enter the title of your set here...":
+        global write_list
+        list_terms = []
+        list_def = []
+        term = True
+        count = -1
+        list_needed = list_entries
+        for entry in list_needed:
+            if term:
+                add_term = entry.get()
+                list_terms.append(add_term)
+                term = not term
+            else:
+                add_def = entry.get()
+                list_def.append(add_def)
+                term = not term
+        for item in list_terms:
+            count += 1
+            t = Term
+            set_v = Term(list_terms[count], list_def[count])
+            line = t.fullstring(set_v)
+            write_list.append(line)
+        title_set = title_entry.get()
+        writefile(title_set)
+        pygame.mixer.music.load("Party horn.mp3")
+        pygame.mixer.music.play(loops=0)
+        clear_screen()
+    else:
+        tk.messagebox.showerror("No title", "No title was entered.")
 
 
 def add_term():
@@ -213,7 +219,7 @@ def create_set():
     create_set_done = tk.Button(frame_buttons_create, text="Done", command=lambda:done_creating(title_entry.get()), width=10, height=2, bg="#4c8151", borderwidth=0, font=("Helvetica", 15))
     create_set_done.grid(row=3, column=1, sticky="e", padx=850)
 
-    frame_image_side2.grid(row=1, column=0, sticky=tk.E)
+    frame_image_create.grid(row=1, column=0, sticky=tk.E)
 
     entry_rank1 = tk.Label(second_frame, text='1', bg="black", fg="#4c8151")
     entry_rank1.grid(row=y, column=0, padx=5)
@@ -234,9 +240,6 @@ def study_set():
     main_menu.entryconfig("Home", state="active")
     main_menu.entryconfig("Study set", state="disabled")
     main_menu.entryconfig("Create set", state="disabled")
-
-    frame_image_side.grid_forget()
-    frame_image_side2.grid_forget()
 
     pygame.mixer.music.load("Mouse Click.mp3")
     pygame.mixer.music.play(loops=0)
@@ -330,6 +333,15 @@ if root.winfo_screenwidth() > 1500:
     big_f2 = ImageTk.PhotoImage(image2)
     big_f_label2 = tk.Label(frame_image_side2, image=big_f2, bg="black")
     big_f_label2.grid(row=0, column=0)
+
+
+    image3 = Image.open("Flashy full.png")
+    image3 = image3.resize((int(WidthImage), 700), Image.ANTIALIAS)
+
+    big_f3 = ImageTk.PhotoImage(image3)
+    big_f_label3 = tk.Label(frame_image_create, image=big_f3, bg="black")
+    big_f_label3.grid(row=0, column=0)
+
 
 root.grid_columnconfigure(0, weight=1)
 
