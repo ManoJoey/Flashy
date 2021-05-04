@@ -53,9 +53,10 @@ def writefile(file_name):
 
 
 root = tk.Tk()
+root.geometry("-2000-0")
 root.title("Flashy")
 root.iconbitmap("F.ico")
-root.wm_state('zoomed')
+root.state('zoomed')
 root.configure(background="black")
 
 
@@ -65,12 +66,6 @@ frame_study = tk.Frame(root, bg="black")
 frame_image_side = tk.Frame(root, bg="black", width=750, height=996, borderwidth=0)
 frame_image_side2 = tk.Frame(root, bg="black", width=750, height=996, borderwidth=0)
 
-frame_create2 = tk.Frame(frame_create, bg="white")
-title_frame = tk.Frame(frame_create, bg="black")
-create_canvas = tk.Canvas(frame_create2, bg="black", width=1140, height=780, highlightthickness=5)
-second_frame = tk.Frame(create_canvas, bg="black")
-frame_buttons_create = tk.Frame(frame_create, bg="black")
-scrollbar = ttk.Scrollbar(frame_create2, orient=tk.VERTICAL, command=create_canvas.yview)
 
 def quit_flashy():
     pygame.mixer.music.load("Minecraft hurt.mp3")
@@ -117,17 +112,18 @@ def done_creating(title_set):
 
 def add_term():
     global y, padcount, stringcount, VisitCreateCount, create_canvas
+    
     pygame.mixer.music.load("Swipe.mp3")
     pygame.mixer.music.play(loops=0)
 
-    entry_rank = tk.Label(second_frame, text=str(y+1), bg="black", fg="#4c8151")
-    entry_rank.grid(row=y, column=0)
+    entry_rank = tk.Label(second_frame, text=str(y+2), bg="black", fg="#4c8151")
+    entry_rank.grid(row=y+1, column=0)
 
     new_entry_term = tk.Entry(second_frame, width=75, borderwidth=0, bg="#4c8151")
-    new_entry_term.grid(row=y, column=1, pady=20, padx=20)
+    new_entry_term.grid(row=y+1, column=1, pady=20, padx=20)
 
     new_entry_definition = tk.Entry(second_frame, width=75, borderwidth=0, bg="#4c8151")
-    new_entry_definition.grid(row=y, column=2, pady=20, padx=85)
+    new_entry_definition.grid(row=y+1, column=2, pady=20, padx=85)
 
     list_entries.append(new_entry_term)
     list_entries.append(new_entry_definition)
@@ -144,9 +140,20 @@ def on_mousewheel(event):
     create_canvas.yview_scroll(int(-1*(event.delta/120)), "units")
 
 
+def title_clicked(clicked_entry):
+    if clicked_entry.get() == "Enter the title of your set here...":
+        clicked_entry.delete(0, tk.END)
+
+def title_left(clicked_entry):
+    if clicked_entry.get() == "":
+        clicked_entry.delete(0, tk.END)
+        clicked_entry.insert(0, "Enter the title of your set here...")
+        root.focus()
+
+
 def create_set():
     #creates a new study set
-    global term_entry, definition_entry, new_term, create_set_done, VisitCreateCount, title_entry, y
+    global term_entry, definition_entry, new_term, create_set_done, VisitCreateCount, title_entry, y, second_frame, create_canvas
     y = 0
 
     pygame.mixer.music.load("Mouse Click.mp3")
@@ -157,6 +164,13 @@ def create_set():
     main_menu.entryconfig("Create set", state="disabled")
 
     clear_screen()
+
+    frame_create2 = tk.Frame(frame_create, bg="white")
+    title_frame = tk.Frame(frame_create, bg="black")
+    create_canvas = tk.Canvas(frame_create2, bg="black", width=1140, height=780, highlightthickness=5)
+    second_frame = tk.Frame(create_canvas, bg="black")
+    frame_buttons_create = tk.Frame(frame_create, bg="black")
+    scrollbar = ttk.Scrollbar(frame_create2, orient=tk.VERTICAL, command=create_canvas.yview)
 
     frame_create.grid(row=1, column=0, sticky=tk.W)
     frame_create2.grid(row=1, column=0, sticky=tk.W)
@@ -177,16 +191,20 @@ def create_set():
     frame_buttons_create.grid(row=2, column=0)
 
     title_label = tk.Label(title_frame, text="Title:", bg="black", fg="#4c8151", font=("Helvetica", 20))
-    title_label.grid(row=0, column=0, stick=tk.W, padx=35, pady=5)
+    title_label.grid(row=0, column=0, sticky=tk.NW, padx=35)
 
     title_entry = tk.Entry(title_frame, width=62, borderwidth=0, bg="#4c8151")
-    title_entry.grid(row=0, column=0, padx=100)
+    title_entry.grid(row=0, column=0, pady=12, padx=110)
+    title_entry.insert(0, "Enter the title of your set here...")
+    title_entry.bind("<Button-1>", lambda event: title_clicked(title_entry))
+    title_entry.bind("<Enter>", lambda event: title_clicked(title_entry))
+    title_entry.bind("<Leave>", lambda event: title_left(title_entry))
 
     term_label = tk.Label(title_frame, text="Term:", bg="black", fg="#4c8151", font=("Helvetica", 20))
     term_label.grid(row=1, column=0, stick=tk.W, padx=35, pady=10)
 
     definition_label = tk.Label(title_frame, text="Definition:", bg="black", fg="#4c8151", font=("Helvetica", 20))
-    definition_label.grid(row=1, column=1, stick=tk.W, pady=10, padx=15)
+    definition_label.grid(row=1, column=1, stick=tk.W, pady=10)
 
     new_term = tk.Button(frame_buttons_create, text="Add term", command=add_term, width=10, height=2, bg="#4c8151", borderwidth=0, font=("Helvetica", 15))
     new_term.grid(row=3, column=0, sticky="w", padx=20, pady=25)
@@ -197,7 +215,17 @@ def create_set():
 
     frame_image_side2.grid(row=1, column=0, sticky=tk.E)
 
-    add_term()
+    entry_rank1 = tk.Label(second_frame, text='1', bg="black", fg="#4c8151")
+    entry_rank1.grid(row=y, column=0, padx=5)
+
+    first_entry_term = tk.Entry(second_frame, width=75, borderwidth=0, bg="#4c8151")
+    first_entry_term.grid(row=y, column=1, pady=20, padx=20)
+
+    first_entry_definition = tk.Entry(second_frame, width=75, borderwidth=0, bg="#4c8151")
+    first_entry_definition.grid(row=y, column=2, pady=20, padx=85)
+
+    list_entries.append(first_entry_term)
+    list_entries.append(first_entry_definition)
 
     VisitCreateCount += 1
 
