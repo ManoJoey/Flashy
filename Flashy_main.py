@@ -116,15 +116,16 @@ def done_creating(title_set):
         pygame.mixer.music.load("Party horn.mp3")
         pygame.mixer.music.play(loops=0)
         clear_screen()
-
+        
         frame_done_creating.grid(row=0, column=0)
         label_done_creating = tk.Label(frame_done_creating, text="Your set has been saved!\nUse the menu to go back to the homepage.", fg="#4c8151", font=("Helvetica", 30), bg="black")
-        label_done_creating.grid(row=0, column=0, pady=20)
+        label_done_creating.grid(row=0, column=0, pady=50)
 
         image_done = Image.open("Check mark.png")
+        image_done = image_done.resize((500, 500), Image.ANTIALIAS)
         image_done_full = ImageTk.PhotoImage(image_done)
         image_done_label = tk.Label(frame_done_creating, image=image_done_full, bg="black")
-        image_done_label.grid(row=1, column=0)
+        image_done_label.grid(row=1, column=0, pady=50)
     else:
         tk.messagebox.showerror("No title", "No title was entered.")
 
