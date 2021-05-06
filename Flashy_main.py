@@ -6,6 +6,9 @@ from datetime import date
 import pygame
 
 pygame.mixer.init()
+pygame.mixer.music.load("Pigstep.mp3")
+pygame.mixer.music.play(-1)
+click = pygame.mixer.Sound("Mouse Click.mp3")
 
 homecount = 0
 y = 0
@@ -15,6 +18,7 @@ read_list = []
 list_entries = []
 list_entries_solid = []
 title_set = ""
+on = True
 
 class Term:
     def __init__(self, term, definition):
@@ -68,13 +72,22 @@ frame_image_side = tk.Frame(root, bg="black", width=750, height=996, borderwidth
 frame_image_side2 = tk.Frame(root, bg="black", width=750, height=996, borderwidth=0)
 frame_image_create = tk.Frame(root, bg="black", width=750, height=996, borderwidth=0)
 frame_done_creating = tk.Frame(root, bg="black")
-frame_done_creating = tk.Frame(root, bg="black")
+frame_view = tk.Frame(root, bg="black")
 
 
 def quit_flashy():
     pygame.mixer.music.load("Minecraft hurt.mp3")
     pygame.mixer.music.play(loops=0)
     root.after(200, root.quit())
+
+def toggle_music():
+    global on
+    if on:
+        pygame.mixer.music.pause()
+        on = False
+    elif on == False:
+        pygame.mixer.music.unpause()
+        on = True
 
 def clear_screen():
     #clears the screen
@@ -85,6 +98,7 @@ def clear_screen():
     frame_image_side2.grid_forget()
     frame_image_create.grid_forget()
     frame_done_creating.grid_forget()
+    frame_view.grid_forget()
 
 
 def done_creating(title_set):
@@ -113,18 +127,14 @@ def done_creating(title_set):
             write_list.append(line)
         title_set = title_entry.get()
         writefile(title_set)
-        pygame.mixer.music.load("Party horn.mp3")
-        pygame.mixer.music.play(loops=0)
+        finish_sound = pygame.mixer.Sound("Party horn.mp3")
+        finish_sound.play()
         clear_screen()
-        
+
         frame_done_creating.grid(row=0, column=0)
         label_done_creating = tk.Label(frame_done_creating, text="Your set has been saved!\nUse the menu to go back to the homepage.", fg="#4c8151", font=("Helvetica", 30), bg="black")
         label_done_creating.grid(row=0, column=0, pady=50)
 
-        image_done = Image.open("Check mark.png")
-        image_done = image_done.resize((500, 500), Image.ANTIALIAS)
-        image_done_full = ImageTk.PhotoImage(image_done)
-        image_done_label = tk.Label(frame_done_creating, image=image_done_full, bg="black")
         image_done_label.grid(row=1, column=0, pady=50)
     else:
         tk.messagebox.showerror("No title", "No title was entered.")
@@ -133,8 +143,8 @@ def done_creating(title_set):
 def add_term():
     global y, padcount, stringcount, VisitCreateCount, create_canvas
     
-    pygame.mixer.music.load("Swipe.mp3")
-    pygame.mixer.music.play(loops=0)
+    new_card_sound = pygame.mixer.Sound("Swipe.mp3")
+    new_card_sound.play()
 
     entry_rank = tk.Label(second_frame, text=str(y+2), bg="black", fg="#4c8151")
     entry_rank.grid(row=y+1, column=0)
@@ -176,12 +186,12 @@ def create_set():
     global term_entry, definition_entry, new_term, create_set_done, VisitCreateCount, title_entry, y, second_frame, create_canvas
     y = 0
 
-    pygame.mixer.music.load("Mouse Click.mp3")
-    pygame.mixer.music.play(loops=0)
+    click.play()
 
     main_menu.entryconfig("Home", state="active")
     main_menu.entryconfig("Study set", state="disabled")
     main_menu.entryconfig("Create set", state="disabled")
+    main_menu.entryconfig("View sets", state="disabled")
 
     clear_screen()
 
@@ -254,12 +264,25 @@ def study_set():
     main_menu.entryconfig("Home", state="active")
     main_menu.entryconfig("Study set", state="disabled")
     main_menu.entryconfig("Create set", state="disabled")
+    main_menu.entryconfig("View sets", state="disabled")
 
-    pygame.mixer.music.load("Mouse Click.mp3")
-    pygame.mixer.music.play(loops=0)
+    click.play()
 
     clear_screen()
     frame_study.grid(row=0, column=0)
+
+def view_sets():
+    #allows you to view all the sets you have
+    main_menu.entryconfig("Home", state="active")
+    main_menu.entryconfig("Study set", state="disabled")
+    main_menu.entryconfig("Create set", state="disabled")
+    main_menu.entryconfig("View sets", state="disabled")
+
+    click.play()
+
+    clear_screen()
+    frame_view.grid(row=0, column=0)
+    
 
 
 def home():
@@ -273,8 +296,7 @@ def home():
     clear_screen()
 
     if homecount > 0:
-        pygame.mixer.music.load("Mouse Click.mp3")
-        pygame.mixer.music.play(loops=0)
+        click.play()
     homecount += 1
 
     for entry in list_entries:
@@ -312,9 +334,11 @@ def home():
     start_studying = tk.Button(frame_home, text="Study a set", width=25, height=4, borderwidth=0, font=("Helvetica", 20), bg="#4c8151", command=study_set)
     start_studying.grid(row=5, column=1, pady=5, padx=8)
 
-    exit_button = tk.Button(frame_home, text="Exit", width=25, height=3, borderwidth=0, font=("Helvetica", 20), bg="#4c8151", command=quit_flashy)
-    exit_button.grid(row=6, column=1, pady=100)
+    view_sets_button = tk.Button(frame_home, text="View your sets", width=25, height=4, borderwidth=0, font=("Helvetica", 20), bg="#4c8151", command=view_sets)
+    view_sets_button.grid(row=6, column=1)
 
+    exit_button = tk.Button(frame_home, text="Exit", width=25, height=3, borderwidth=0, font=("Helvetica", 20), bg="#4c8151", command=quit_flashy)
+    exit_button.grid(row=7, column=1, pady=70)
 
 #all the menu options
 main_menu = tk.Menu(root)
@@ -322,6 +346,8 @@ root.config(menu=main_menu)
 main_menu.add_command(label="Home", command=home)
 main_menu.add_command(label="Create set", command=create_set)
 main_menu.add_command(label="Study set", command=study_set)
+main_menu.add_command(label="View sets", command=view_sets)
+main_menu.add_command(label="Toggle music", command=toggle_music)
 main_menu.add_command(label="Exit", command=quit_flashy)
 
 
@@ -356,6 +382,10 @@ if root.winfo_screenwidth() > 1500:
     big_f_label3 = tk.Label(frame_image_create, image=big_f3, bg="black")
     big_f_label3.grid(row=0, column=0)
 
+image_done = Image.open("Check mark.png")
+image_done = image_done.resize((500, 500), Image.ANTIALIAS)
+image_done_full = ImageTk.PhotoImage(image_done)
+image_done_label = tk.Label(frame_done_creating, image=image_done_full, bg="black")
 
 root.grid_columnconfigure(0, weight=1)
 
