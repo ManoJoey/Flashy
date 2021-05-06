@@ -67,6 +67,8 @@ frame_study = tk.Frame(root, bg="black")
 frame_image_side = tk.Frame(root, bg="black", width=750, height=996, borderwidth=0)
 frame_image_side2 = tk.Frame(root, bg="black", width=750, height=996, borderwidth=0)
 frame_image_create = tk.Frame(root, bg="black", width=750, height=996, borderwidth=0)
+frame_done_creating = tk.Frame(root, bg="black")
+frame_done_creating = tk.Frame(root, bg="black")
 
 
 def quit_flashy():
@@ -82,6 +84,7 @@ def clear_screen():
     frame_image_side.grid_forget()
     frame_image_side2.grid_forget()
     frame_image_create.grid_forget()
+    frame_done_creating.grid_forget()
 
 
 def done_creating(title_set):
@@ -93,14 +96,15 @@ def done_creating(title_set):
         count = -1
         list_needed = list_entries
         for entry in list_needed:
-            if term:
+            if term and entry.get() != "":
                 add_term = entry.get()
                 list_terms.append(add_term)
                 term = not term
             else:
-                add_def = entry.get()
-                list_def.append(add_def)
-                term = not term
+                if entry.get() != "":
+                    add_def = entry.get()
+                    list_def.append(add_def)
+                    term = not term
         for item in list_terms:
             count += 1
             t = Term
@@ -112,6 +116,15 @@ def done_creating(title_set):
         pygame.mixer.music.load("Party horn.mp3")
         pygame.mixer.music.play(loops=0)
         clear_screen()
+
+        frame_done_creating.grid(row=0, column=0)
+        label_done_creating = tk.Label(frame_done_creating, text="Your set has been saved!\nUse the menu to go back to the homepage.", fg="#4c8151", font=("Helvetica", 30), bg="black")
+        label_done_creating.grid(row=0, column=0, pady=20)
+
+        image_done = Image.open("Check mark.png")
+        image_done_full = ImageTk.PhotoImage(image_done)
+        image_done_label = tk.Label(frame_done_creating, image=image_done_full, bg="black")
+        image_done_label.grid(row=1, column=0)
     else:
         tk.messagebox.showerror("No title", "No title was entered.")
 
