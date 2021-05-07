@@ -4,10 +4,13 @@ from tkinter import messagebox
 from PIL import ImageTk,Image
 from datetime import date
 import pygame
+import os
 
 pygame.mixer.init()
 pygame.mixer.music.load("Pigstep.mp3")
 pygame.mixer.music.play(-1)
+pygame.mixer.music.pause()
+
 click = pygame.mixer.Sound("Mouse Click.mp3")
 
 homecount = 0
@@ -18,7 +21,7 @@ read_list = []
 list_entries = []
 list_entries_solid = []
 title_set = ""
-on = True
+on = False
 
 class Term:
     def __init__(self, term, definition):
@@ -34,6 +37,7 @@ class Term:
         self.term = x[0]
         self.definition = x[1]
 
+
 def read_file(file_name):
     file_name_to_open = file_name + ".txt"
     file_ = open(file_name_to_open, "r")
@@ -43,6 +47,7 @@ def read_file(file_name):
         else:
             read_list.append(item)
     file_.close()
+
 
 def writefile(file_name):
     file_write_to_open = file_name + ".txt"
@@ -80,6 +85,7 @@ def quit_flashy():
     pygame.mixer.music.play(loops=0)
     root.after(200, root.quit())
 
+
 def toggle_music():
     global on
     if on:
@@ -88,6 +94,7 @@ def toggle_music():
     elif on == False:
         pygame.mixer.music.unpause()
         on = True
+
 
 def clear_screen():
     #clears the screen
@@ -103,17 +110,18 @@ def clear_screen():
 
 def done_creating(title_set):
     if title_set != "Enter the title of your set here...":
-        global write_list
+        global write_list, list_entries, list_needed
         list_terms = []
         list_def = []
         term = True
         count = -1
         list_needed = list_entries
         for entry in list_needed:
-            if term and entry.get() != "":
-                add_term = entry.get()
-                list_terms.append(add_term)
-                term = not term
+            if term:
+                if entry.get() != "":
+                    add_term = entry.get()
+                    list_terms.append(add_term)
+                    term = not term
             else:
                 if entry.get() != "":
                     add_def = entry.get()
@@ -130,6 +138,9 @@ def done_creating(title_set):
         finish_sound = pygame.mixer.Sound("Party horn.mp3")
         finish_sound.play()
         clear_screen()
+        #Need to clear lists because program is calling non-existing entries
+        list_entries = []
+        list_needed = list_entries
 
         frame_done_creating.grid(row=0, column=0)
         label_done_creating = tk.Label(frame_done_creating, text="Your set has been saved!\nUse the menu to go back to the homepage.", fg="#4c8151", font=("Helvetica", 30), bg="black")
@@ -173,6 +184,7 @@ def on_mousewheel(event):
 def title_clicked(clicked_entry):
     if clicked_entry.get() == "Enter the title of your set here...":
         clicked_entry.delete(0, tk.END)
+
 
 def title_left(clicked_entry):
     if clicked_entry.get() == "":
@@ -259,6 +271,16 @@ def create_set():
 
     VisitCreateCount += 1
 
+
+def select_set():
+    dirname = os.getcwd()
+
+    ext = (".txt", ".mp3")
+    for files in os.listdir(dirname):
+        if files.endswith(ext):
+            print(files)
+
+
 def study_set():
     #get button with changing title and definition
     main_menu.entryconfig("Home", state="active")
@@ -270,6 +292,9 @@ def study_set():
 
     clear_screen()
     frame_study.grid(row=0, column=0)
+    
+    select_set()
+
 
 def view_sets():
     #allows you to view all the sets you have
@@ -282,7 +307,6 @@ def view_sets():
 
     clear_screen()
     frame_view.grid(row=0, column=0)
-    
 
 
 def home():
@@ -292,6 +316,7 @@ def home():
     main_menu.entryconfig("Home", state="disabled")
     main_menu.entryconfig("Study set", state="active")
     main_menu.entryconfig("Create set", state="active")
+    main_menu.entryconfig("View sets", state="active")
 
     clear_screen()
 
@@ -340,6 +365,7 @@ def home():
     exit_button = tk.Button(frame_home, text="Exit", width=25, height=3, borderwidth=0, font=("Helvetica", 20), bg="#4c8151", command=quit_flashy)
     exit_button.grid(row=7, column=1, pady=70)
 
+
 #all the menu options
 main_menu = tk.Menu(root)
 root.config(menu=main_menu)
@@ -352,6 +378,7 @@ main_menu.add_command(label="Exit", command=quit_flashy)
 
 
 home()
+
 
 ImageWidthVariable = 1980 / 700
 round(ImageWidthVariable, 8)
