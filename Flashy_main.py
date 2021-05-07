@@ -22,6 +22,7 @@ list_entries = []
 list_entries_solid = []
 title_set = ""
 on = False
+list_buttons_study = []
 
 class Term:
     def __init__(self, term, definition):
@@ -272,17 +273,13 @@ def create_set():
     VisitCreateCount += 1
 
 
-def select_set():
-    dirname = os.getcwd()
-
-    ext = (".txt", ".mp3")
-    for files in os.listdir(dirname):
-        if files.endswith(ext):
-            print(files)
+def select_set(selected_file):
+    print(selected_file.readlines())
 
 
 def study_set():
-    #get button with changing title and definition
+    #you can select and study a set
+    rowvar = 0
     main_menu.entryconfig("Home", state="active")
     main_menu.entryconfig("Study set", state="disabled")
     main_menu.entryconfig("Create set", state="disabled")
@@ -293,7 +290,18 @@ def study_set():
     clear_screen()
     frame_study.grid(row=0, column=0)
     
-    select_set()
+    dirname = os.getcwd()
+
+    ext = (".txt")
+    for files in os.listdir(dirname):
+        if files.endswith(ext):
+            name_file = files.replace(".txt", "")
+            opened_file = open(files, "r")
+            button_select_file = tk.Button(frame_study, text=name_file, command= lambda: select_set(opened_file), width=12, height=2, bg="#4c8151", borderwidth=0, font=("Helvetica", 15))
+            #note to self; clear list_buttons_study when study_set is finished
+            list_buttons_study.append(button_select_file)
+            list_buttons_study[rowvar].grid(row=rowvar, column=0, pady=20)
+            rowvar += 1
 
 
 def view_sets():
