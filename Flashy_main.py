@@ -16,6 +16,7 @@ click = pygame.mixer.Sound("Mouse Click.mp3")
 homecount = 0
 y = 0
 VisitCreateCount = 0
+VisitStudyCount = 0
 write_list = []
 read_list = []
 list_entries = []
@@ -23,7 +24,6 @@ list_entries_solid = []
 title_set = ""
 on = False
 list_buttons_study = []
-list_text_files = []
 
 class Term:
     def __init__(self, term, definition):
@@ -75,11 +75,12 @@ root.configure(background="black")
 frame_home = tk.Frame(root, bg="black")
 frame_create = tk.Frame(root, bg="black")
 frame_study = tk.Frame(root, bg="black")
+frame_start_studying = tk.Frame(root, bg="black")
+frame_view = tk.Frame(root, bg="black")
 frame_image_side = tk.Frame(root, bg="black", width=750, height=996, borderwidth=0)
 frame_image_side2 = tk.Frame(root, bg="black", width=750, height=996, borderwidth=0)
 frame_image_create = tk.Frame(root, bg="black", width=750, height=996, borderwidth=0)
 frame_done_creating = tk.Frame(root, bg="black")
-frame_view = tk.Frame(root, bg="black")
 
 
 def quit_flashy():
@@ -108,6 +109,7 @@ def clear_screen():
     frame_image_create.grid_forget()
     frame_done_creating.grid_forget()
     frame_view.grid_forget()
+    frame_start_studying.grid_forget()
 
 
 def done_creating(title_set):
@@ -140,7 +142,6 @@ def done_creating(title_set):
         finish_sound = pygame.mixer.Sound("Party horn.mp3")
         finish_sound.play()
         clear_screen()
-        #Need to clear lists because program is calling non-existing entries
         list_entries = []
         list_needed = list_entries
 
@@ -154,7 +155,7 @@ def done_creating(title_set):
 
 
 def add_term():
-    global y, padcount, stringcount, VisitCreateCount, create_canvas
+    global y, padcount, stringcount, create_canvas
     
     new_card_sound = pygame.mixer.Sound("Swipe.mp3")
     new_card_sound.play()
@@ -274,12 +275,39 @@ def create_set():
     VisitCreateCount += 1
 
 
+def show_def():
+    pass
+
+
 def continue_with_file(button):
+    global list_buttons_answers, VisitStudyCount, list_answers
+    list_buttons_answers = []
+    list_answers = []
+    xvar = 0
+    yvar = 0
+
     text = button["text"]
     full_text = text + ".txt"
     opened_file = open(full_text, "r")
-    for line in opened_file:
-        print(line)
+
+    clear_screen()
+    frame_start_studying.grid(row=0, column=0)
+
+    for line in opened_file.readlines():
+        line = line.split(" | ")
+
+        button_term = tk.Button(frame_start_studying, text=line[0], command=show_def, width=20, height=2, bg="#4c8151", borderwidth=0, font=("Helvetica", 15))
+        button_term.grid(row=yvar, column=xvar, padx=10, pady=10)
+        list_buttons_answers.append(button_term)
+        list_answers.append(line[1])
+        
+        if (xvar - 6) < 0:
+            xvar += 1
+        else:
+            xvar = xvar - 6
+            yvar += 1
+    VisitStudyCount += 1
+
 
 
 def select_set(files):
@@ -291,7 +319,7 @@ def select_set(files):
     rowvar += 1
 
 
-#note to self; clear list_buttons_study and list_text_files when study_set is finished
+#note to self; clear list_buttons_study when study_set is finished
 def study_set():
     #you can select and study a set
     global rowvar
@@ -348,12 +376,9 @@ def home():
             list_entries_solid.pop(-1)
         entry.destroy()
     
-    if VisitCreateCount > 0:
-        new_term.destroy()
-        create_set_done.destroy()
-        for child in second_frame.winfo_children():
-            if child.winfo_class() == 'Label':
-                child.destroy()
+    if VisitStudyCount > 0:
+        for button in list_buttons_answers:
+            button.destroy()
 
     frame_image_side.grid(row=0, column=0)
     frame_home.grid(row=0, column=1)
