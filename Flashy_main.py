@@ -23,7 +23,6 @@ list_entries = []
 list_entries_solid = []
 title_set = ""
 on = False
-list_buttons_study = []
 
 class Term:
     def __init__(self, term, definition):
@@ -275,16 +274,25 @@ def create_set():
     VisitCreateCount += 1
 
 
-def show_def():
-    pass
+def show_def(pressed_button):
+    #How do I find which button has been pressed in order to reveal the answer?
+    click.play()
+    text = pressed_button["text"]
+    index = list_terms.index(text)
+    answer = list_answers[index]
+    print(answer)
+    #This does not work, help meeeee
 
 
 def continue_with_file(button):
-    global list_buttons_answers, VisitStudyCount, list_answers
+    global list_buttons_answers, list_terms, VisitStudyCount, list_answers
     list_buttons_answers = []
+    list_terms = []
     list_answers = []
     xvar = 0
     yvar = 0
+
+    click.play()
 
     text = button["text"]
     full_text = text + ".txt"
@@ -296,9 +304,10 @@ def continue_with_file(button):
     for line in opened_file.readlines():
         line = line.split(" | ")
 
-        button_term = tk.Button(frame_start_studying, text=line[0], command=show_def, width=20, height=2, bg="#4c8151", borderwidth=0, font=("Helvetica", 15))
+        button_term = tk.Button(frame_start_studying, text=line[0], command=lambda: show_def(button_term), width=20, height=2, bg="#4c8151", borderwidth=0, font=("Helvetica", 15))
         button_term.grid(row=yvar, column=xvar, padx=10, pady=10)
         list_buttons_answers.append(button_term)
+        list_terms.append(line[0])
         list_answers.append(line[1])
         
         if (xvar - 6) < 0:
@@ -306,24 +315,24 @@ def continue_with_file(button):
         else:
             xvar = xvar - 6
             yvar += 1
+
     VisitStudyCount += 1
 
 
 
 def select_set(files):
-    global rowvar
     name_file = files.replace(".txt", "")
-    button_select = tk.Button(frame_study, text=name_file, command=lambda: continue_with_file(button_select), width=10, height=2, bg="#4c8151", borderwidth=0, font=("Helvetica", 15))
-    button_select.grid(row=rowvar, column=0, pady=10)
+    button_select = tk.Button(frame_study, text=name_file, command=lambda: continue_with_file(button_select), width=20, height=2, bg="#4c8151", borderwidth=0, font=("Helvetica", 15))
+    button_select.grid(row=they, column=thex, padx=10, pady=10)
     list_buttons_study.append(button_select)
-    rowvar += 1
 
 
-#note to self; clear list_buttons_study when study_set is finished
 def study_set():
     #you can select and study a set
-    global rowvar
-    rowvar = 0
+    global thex, they, list_buttons_study
+    list_buttons_study = []
+    thex = 0
+    they = 0
     main_menu.entryconfig("Home", state="active")
     main_menu.entryconfig("Study set", state="disabled")
     main_menu.entryconfig("Create set", state="disabled")
@@ -340,6 +349,12 @@ def study_set():
     for files in os.listdir(dirname):
         if files.endswith(ext):
             select_set(files)
+                
+            if (thex - 6) < 0:
+                thex += 1
+            else:
+                thex = thex - 6
+                they += 1
 
 
 def view_sets():
