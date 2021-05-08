@@ -274,15 +274,27 @@ def create_set():
     VisitCreateCount += 1
 
 
-def select_set():
-    #needed to stop, will continue tomorrow
-    pass
+def continue_with_file(button):
+    text = button["text"]
+    full_text = text + ".txt"
+    opened_file = open(full_text, "r")
+    for line in opened_file:
+        print(line)
+
+
+def select_set(files):
+    global rowvar
+    name_file = files.replace(".txt", "")
+    button_select = tk.Button(frame_study, text=name_file, command=lambda: continue_with_file(button_select), width=10, height=2, bg="#4c8151", borderwidth=0, font=("Helvetica", 15))
+    button_select.grid(row=rowvar, column=0, pady=10)
+    list_buttons_study.append(button_select)
+    rowvar += 1
 
 
 #note to self; clear list_buttons_study and list_text_files when study_set is finished
 def study_set():
     #you can select and study a set
-    global list_text_files, name_file
+    global rowvar
     rowvar = 0
     main_menu.entryconfig("Home", state="active")
     main_menu.entryconfig("Study set", state="disabled")
@@ -299,13 +311,7 @@ def study_set():
     ext = (".txt")
     for files in os.listdir(dirname):
         if files.endswith(ext):
-            name_file = files.replace(".txt", "")
-            list_text_files.append(files)
-            button_select_file = tk.Button(frame_study, text=name_file, command=select_set, width=12, height=2, bg="#4c8151", borderwidth=0, font=("Helvetica", 15))
-            list_buttons_study.append(button_select_file)
-            #list_buttons_study.append(rowvar)
-            list_buttons_study[rowvar].grid(row=rowvar, column=0, pady=20)
-            rowvar += 1
+            select_set(files)
 
 
 def view_sets():
