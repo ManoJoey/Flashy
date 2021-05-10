@@ -271,17 +271,16 @@ def create_set():
     list_entries.append(first_entry_term)
     list_entries.append(first_entry_definition)
 
-    VisitCreateCount += 1
+    VisitCreateCount += 1        
 
 
-def show_def(pressed_button):
-    #How do I find which button has been pressed in order to reveal the answer?
+def show_def(event):
+    #Still need to change text back but time and .after doesn't work
     click.play()
-    text = pressed_button["text"]
-    index = list_terms.index(text)
-    answer = list_answers[index]
-    print(answer)
-    #This does not work, help meeeee
+    for button in list_buttons_answers:
+        if button is event.widget:
+            index = list_terms.index(button["text"])
+            button.config(text=list_answers[index])
 
 
 def continue_with_file(button):
@@ -303,9 +302,11 @@ def continue_with_file(button):
 
     for line in opened_file.readlines():
         line = line.split(" | ")
+        line[1] = line[1].rstrip("\n")
 
-        button_term = tk.Button(frame_start_studying, text=line[0], command=lambda: show_def(button_term), width=20, height=2, bg="#4c8151", borderwidth=0, font=("Helvetica", 15))
+        button_term = tk.Button(frame_start_studying, text=line[0], width=20, height=2, bg="#4c8151", borderwidth=0, font=("Helvetica", 15))
         button_term.grid(row=yvar, column=xvar, padx=10, pady=10)
+        button_term.bind("<Button-1>", show_def)
         list_buttons_answers.append(button_term)
         list_terms.append(line[0])
         list_answers.append(line[1])
@@ -317,7 +318,6 @@ def continue_with_file(button):
             yvar += 1
 
     VisitStudyCount += 1
-
 
 
 def select_set(files):
