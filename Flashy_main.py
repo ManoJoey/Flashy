@@ -475,3 +475,4 @@ image_done_label = tk.Label(frame_done_creating, image=image_done_full, bg="blac
 root.grid_columnconfigure(0, weight=1)
 
 root.mainloop()
+#use grid.row/columnconfigure so that it will fit on all screens
