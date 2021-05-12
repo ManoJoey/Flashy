@@ -5,6 +5,7 @@ from PIL import ImageTk,Image
 from datetime import date
 import pygame
 import os
+import threading
 
 pygame.mixer.init()
 pygame.mixer.music.load("Pigstep.mp3")
@@ -443,7 +444,7 @@ round(ImageWidthVariable, 8)
 WidthImage = root.winfo_screenwidth() / ImageWidthVariable
 
 if root.winfo_screenwidth() > 1500:
-
+    
     image1 = Image.open("F.png")
     image1 = image1.resize((int(WidthImage), 700), Image.ANTIALIAS)
 
@@ -475,4 +476,3 @@ image_done_label = tk.Label(frame_done_creating, image=image_done_full, bg="blac
 root.grid_columnconfigure(0, weight=1)
 
 root.mainloop()
-#use grid.row/columnconfigure so that it will fit on all screens
