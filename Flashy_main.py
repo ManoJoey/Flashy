@@ -295,7 +295,7 @@ def show_def(event):
                 x.start()
             except:
                 home()
-                tk.messagebox.showerror("Something went wrong", "Something went wrong, prehaps you didn't fill in a time?")
+                tk.messagebox.showerror("Something went wrong", "Something went wrong, perhaps you didn't fill in a time?")
 
 
 def enter_time(window, entry):
