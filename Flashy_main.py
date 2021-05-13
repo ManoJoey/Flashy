@@ -277,19 +277,25 @@ def create_set():
 
 
 def timer_thread(name, item, button, requested_time):
+    button.config(bg="black", fg="#4c8151")
     time.sleep(requested_time)
     button.config(text=item)
+    button.config(bg="#4c8151", fg="black")
 
 
 def show_def(event):
     click.play()
     for button in list_buttons_answers:
         if button is event.widget:
-            index = list_terms.index(button["text"])
-            button.config(text=list_answers[index])
-            requested_time = int(time_wanted)
-            x = threading.Thread(target=timer_thread, args=(1, list_terms[index], list_buttons_answers[index], requested_time))
-            x.start()
+            try:
+                index = list_terms.index(button["text"])
+                button.config(text=list_answers[index])
+                requested_time = int(time_wanted)
+                x = threading.Thread(target=timer_thread, args=(1, list_terms[index], list_buttons_answers[index], requested_time))
+                x.start()
+            except:
+                home()
+                tk.messagebox.showerror("Something went wrong", "Something went wrong, prehaps you didn't fill in a time?")
 
 
 def enter_time(window, entry):
@@ -302,6 +308,33 @@ def enter_time(window, entry):
         tk.messagebox.showerror("Integer", "Please enter an integer")
         window.attributes("-topmost", 1)
         window.after_idle(window.attributes, '-topmost', 0)
+
+
+def toplevel():
+    top = tk.Toplevel()
+    top.geometry("420x120")
+    top.title("Time")
+    top.iconbitmap("F.ico")
+    top.config(bg="black")
+    top.attributes("-topmost", 1)
+    top.grab_set()
+
+    WindowWidth = top.winfo_reqwidth()
+    WindowHeight = top.winfo_reqheight()
+
+    positionRight = int(root.winfo_screenwidth()/2 - WindowWidth/2)
+    positionDown = int(root.winfo_screenheight()/2 - WindowHeight/2)
+    top.geometry("+{}+{}".format(positionRight, positionDown))
+
+    top_label = tk.Label(top, text="How long do you want to see the answer for?", bg="black", fg="#4c8151", font=("Helvetica", 15))
+    top_label.pack(pady=10)
+
+    top_entry = tk.Entry(top, bg="#4c8151", fg="black", bd=0, width=30)
+    top_entry.pack()
+
+    done_b_top = tk.Button(top, text="Enter", bg="black", fg="#4c8151", bd=0, font=("Helvetica", 15), command=lambda: enter_time(top, top_entry.get()))
+    done_b_top.pack(pady=10)
+    top.bind("<Return>", lambda event: enter_time(top, top_entry.get()))
 
 
 def continue_with_file(button):
@@ -338,23 +371,7 @@ def continue_with_file(button):
             xvar = xvar - 6
             yvar += 1
 
-    root2 = tk.Tk()
-    root2.title("Enter time")
-    root2.iconbitmap("F.ico")
-    root2.geometry("420x120-2500+100")
-    root2.config(bg="black")
-
-    root2_label = tk.Label(root2, text="How long do you want to see the answer for?", bg="black", fg="#4c8151", font=("Helvetica", 15))
-    root2_label.pack(pady=10)
-
-    time_entry = tk.Entry(root2, bg="#4c8151", fg="black", bd=0, width=30)
-    time_entry.pack()
-
-    done_b_root2 = tk.Button(root2, text="Enter", bg="black", fg="#4c8151", bd=0, font=("Helvetica", 15), command=lambda: enter_time(root2, time_entry.get()))
-    done_b_root2.pack(pady=10)
-    root2.bind("<Return>", lambda event: enter_time(root2, time_entry.get()))
-
-    root2.mainloop()
+    toplevel()
 
     VisitStudyCount += 1
 
