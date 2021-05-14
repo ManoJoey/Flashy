@@ -176,13 +176,13 @@ def add_term():
     y += 1
 
 
-def reset_scrollregion(self):
-    create_canvas.configure(scrollregion=create_canvas.bbox("all"))
+def reset_scrollregion(self, canvas):
+    canvas.configure(scrollregion=canvas.bbox("all"))
 
 
-def on_mousewheel(event):
+def on_mousewheel(event, canvas):
     #allows you to scroll
-    create_canvas.yview_scroll(int(-1*(event.delta/120)), "units")
+    canvas.yview_scroll(int(-1*(event.delta/120)), "units")
 
 
 def title_clicked(clicked_entry):
@@ -228,11 +228,11 @@ def create_set():
 
     create_canvas.configure(yscrollcommand=scrollbar.set)
     create_canvas.configure(scrollregion=create_canvas.bbox("all"))
-    create_canvas.bind_all("<MouseWheel>", on_mousewheel)
+    create_canvas.bind_all("<MouseWheel>", lambda event: on_mousewheel(event, create_canvas))
 
     create_canvas.create_window((0,0), window=second_frame, anchor="nw")
 
-    second_frame.bind("<Configure>", reset_scrollregion)
+    second_frame.bind("<Configure>", lambda self: reset_scrollregion(self, create_canvas))
 
     frame_buttons_create.grid(row=2, column=0)
 
@@ -291,7 +291,7 @@ def show_def(event):
                 index = list_terms.index(button["text"])
                 button.config(text=list_answers[index])
                 requested_time = int(time_wanted)
-                x = threading.Thread(target=timer_thread, args=(1, list_terms[index], list_buttons_answers[index], requested_time))
+                x = threading.Thread(target=timer_thread, args=(1, list_terms[index], list_buttons_answers[index], requested_time), daemon=True)
                 x.start()
             except:
                 home()
@@ -352,13 +352,36 @@ def continue_with_file(button):
     opened_file = open(full_text, "r")
 
     clear_screen()
-    frame_start_studying.grid(row=0, column=0)
+    frame_start_studying.grid(row=0, column=0, sticky=tk.NSEW)
+
+    root.grid_columnconfigure(0, weight=1)
+    root.grid_rowconfigure(0, weight=1)
+    
+    frame_start_studying2 = tk.Frame(frame_start_studying, bg="black")
+    frame_start_studying2.pack(fill=tk.BOTH, expand=1)
+    
+    study_canvas = tk.Canvas(frame_start_studying2, bg="black")
+    study_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
+    study_canvas.bind_all("<MouseWheel>", lambda event: on_mousewheel(event, study_canvas))
+
+    study_scrollbar = ttk.Scrollbar(frame_start_studying2, orient=tk.VERTICAL, command=study_canvas.yview)
+    study_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+    study_canvas.configure(yscrollcommand=study_scrollbar.set)
+    study_canvas.bind("<Configure>", lambda event: study_canvas.configure(scrollregion=study_canvas.bbox("all")))
+
+    study_canvas_frame = tk.Frame(study_canvas, bg="black")
+
+    study_canvas.create_window((0, 0), window=study_canvas_frame, anchor="nw")
+
+    study_canvas_frame.bind("<Configure>", lambda self: reset_scrollregion(self, study_canvas))
+
 
     for line in opened_file.readlines():
         line = line.split(" | ")
         line[1] = line[1].rstrip("\n")
 
-        button_term = tk.Button(frame_start_studying, text=line[0], width=20, height=2, bg="#4c8151", borderwidth=0, font=("Helvetica", 15))
+        button_term = tk.Button(study_canvas_frame, text=line[0], width=22, height=2, bg="#4c8151", borderwidth=0, font=("Helvetica", 15))
         button_term.grid(row=yvar, column=xvar, padx=10, pady=10)
         button_term.bind("<Button-1>", show_def)
         list_buttons_answers.append(button_term)
