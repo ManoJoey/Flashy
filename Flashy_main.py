@@ -17,8 +17,8 @@ click = pygame.mixer.Sound("Mouse Click.mp3")
 
 homecount = 0
 y = 0
-VisitCreateCount = 0
-VisitStudyCount = 0
+VisitStudy = False
+VisitSet = False
 write_list = []
 read_list = []
 list_entries = []
@@ -111,6 +111,8 @@ def clear_screen():
     frame_done_creating.grid_forget()
     frame_view.grid_forget()
     frame_start_studying.grid_forget()
+    if VisitSet:
+        frame_start_studying2.pack_forget()
 
 
 def done_creating(title_set):
@@ -199,7 +201,7 @@ def title_left(clicked_entry):
 
 def create_set():
     # creates a new study set
-    global term_entry, definition_entry, new_term, create_set_done, VisitCreateCount, title_entry, y, second_frame, create_canvas
+    global term_entry, definition_entry, new_term, create_set_done, title_entry, y, second_frame, create_canvas
     y = 0
 
     click.play()
@@ -271,9 +273,7 @@ def create_set():
     first_entry_definition.grid(row=y, column=2, pady=20, padx=85)
 
     list_entries.append(first_entry_term)
-    list_entries.append(first_entry_definition)
-
-    VisitCreateCount += 1        
+    list_entries.append(first_entry_definition)      
 
 
 def timer_thread(name, item, button, requested_time):
@@ -338,7 +338,7 @@ def toplevel():
 
 
 def continue_with_file(button):
-    global list_buttons_answers, list_terms, VisitStudyCount, list_answers
+    global list_buttons_answers, list_terms, VisitStudy, list_answers, frame_start_studying2, VisitSet
     list_buttons_answers = []
     list_terms = []
     list_answers = []
@@ -376,6 +376,7 @@ def continue_with_file(button):
 
     study_canvas_frame.bind("<Configure>", lambda self: reset_scrollregion(self, study_canvas))
 
+    VisitSet = True
 
     for line in opened_file.readlines():
         line = line.split(" | ")
@@ -396,7 +397,7 @@ def continue_with_file(button):
 
     toplevel()
 
-    VisitStudyCount += 1
+    VisitStudy = True
 
 
 def select_set(files):
@@ -409,9 +410,15 @@ def select_set(files):
 def study_set():
     # you can select and study a set
     global thex, they, list_buttons_study
+
+    root.columnconfigure(0, weight=1)
+    root.columnconfigure(2, weight=0)
+    root.rowconfigure(0, weight=0)
+
     list_buttons_study = []
     thex = 0
     they = 0
+
     main_menu.entryconfig("Home", state="active")
     main_menu.entryconfig("Study set", state="disabled")
     main_menu.entryconfig("Create set", state="disabled")
@@ -453,6 +460,10 @@ def home():
     # creates the home screen
     global homecount
 
+    root.columnconfigure(0, weight=1)
+    root.columnconfigure(2, weight=1)
+    root.rowconfigure(0, weight=1)
+
     main_menu.entryconfig("Home", state="disabled")
     main_menu.entryconfig("Study set", state="active")
     main_menu.entryconfig("Create set", state="active")
@@ -470,7 +481,7 @@ def home():
             list_entries_solid.pop(-1)
         entry.destroy()
     
-    if VisitStudyCount > 0:
+    if VisitStudy:
         for button in list_buttons_answers:
             button.destroy()
 
@@ -552,9 +563,6 @@ image_done_full = ImageTk.PhotoImage(image_done)
 image_done_label = tk.Label(frame_done_creating, image=image_done_full, bg="black")
 
 def WeighItDown():
-    root.columnconfigure(0, weight=1)
-    root.rowconfigure(0, weight=1)
-
     # frame home
     frame_home.grid_columnconfigure(0, weight=1)
     frame_home.grid_columnconfigure(1, weight=1)
@@ -569,17 +577,16 @@ def WeighItDown():
 
     # frame create
     frame_create.grid_columnconfigure(0, weight=1)
-    frame_create.grid_columnconfigure(1, weight=1)
     frame_create.grid_rowconfigure(0, weight=1)
-    frame_create.grid_rowconfigure(1, weight=1)
-    frame_create.grid_rowconfigure(2, weight=1)
 
 WeighItDown()
 
 root.mainloop()
 
 
-""" frame_home = tk.Frame(root, bg="black")
+"""
+This is here so I could see what to row/columnconfigure while making WeighItDown
+frame_home = tk.Frame(root, bg="black")
 frame_create = tk.Frame(root, bg="black")
 frame_study = tk.Frame(root, bg="black")
 frame_start_studying = tk.Frame(root, bg="black")
