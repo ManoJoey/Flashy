@@ -80,7 +80,7 @@ frame_start_studying = tk.Frame(root, bg="black")
 frame_view = tk.Frame(root, bg="black")
 frame_image_side = tk.Frame(root, bg="black", width=750, height=996, borderwidth=0)
 frame_image_side2 = tk.Frame(root, bg="black", width=750, height=996, borderwidth=0)
-frame_image_create = tk.Frame(root, bg="black", width=750, height=996, borderwidth=0)
+frame_image_create = tk.Frame(frame_create, bg="black", width=750, height=996, borderwidth=0)
 frame_done_creating = tk.Frame(root, bg="black")
 
 
@@ -150,9 +150,9 @@ def done_creating(title_set):
 
         frame_done_creating.grid(row=0, column=0)
         label_done_creating = tk.Label(frame_done_creating, text="Your set has been saved!\nUse the menu to go back to the homepage.", fg="#4c8151", font=("Helvetica", 30), bg="black")
-        label_done_creating.grid(row=0, column=0, pady=50)
+        label_done_creating.grid(row=0, column=0)
 
-        image_done_label.grid(row=1, column=0, pady=50)
+        image_done_label.grid(row=1, column=0, pady=100)
     else:
         tk.messagebox.showerror("No title", "No title was entered.")
 
@@ -460,10 +460,6 @@ def home():
     # creates the home screen
     global homecount
 
-    root.columnconfigure(0, weight=1)
-    root.columnconfigure(2, weight=1)
-    root.rowconfigure(0, weight=1)
-
     main_menu.entryconfig("Home", state="disabled")
     main_menu.entryconfig("Study set", state="active")
     main_menu.entryconfig("Create set", state="active")
@@ -563,6 +559,9 @@ image_done_full = ImageTk.PhotoImage(image_done)
 image_done_label = tk.Label(frame_done_creating, image=image_done_full, bg="black")
 
 def WeighItDown():
+    root.grid_columnconfigure(0, weight=1)
+    root.grid_rowconfigure(0, weight=1)
+
     # frame home
     frame_home.grid_columnconfigure(0, weight=1)
     frame_home.grid_columnconfigure(1, weight=1)
@@ -577,7 +576,31 @@ def WeighItDown():
 
     # frame create
     frame_create.grid_columnconfigure(0, weight=1)
+    frame_create.grid_columnconfigure(0, weight=1)
     frame_create.grid_rowconfigure(0, weight=1)
+    frame_create.grid_rowconfigure(1, weight=0)
+    frame_create.grid_rowconfigure(2, weight=1)
+
+    # frame study
+    frame_study.grid_columnconfigure(0, weight=1)
+    frame_study.grid_columnconfigure(1, weight=1)
+    frame_study.grid_columnconfigure(2, weight=1)
+    frame_study.grid_columnconfigure(3, weight=1)
+    frame_study.grid_columnconfigure(4, weight=1)
+    frame_study.grid_columnconfigure(5, weight=1)
+    frame_study.grid_columnconfigure(6, weight=1)
+    frame_study.grid_rowconfigure(0, weight=1)
+    frame_study.grid_rowconfigure(1, weight=1)
+    frame_study.grid_rowconfigure(2, weight=1)
+    frame_study.grid_rowconfigure(3, weight=1)
+
+    # frame view
+    frame_view.grid_columnconfigure(0, weight=1)
+
+    # frame done creating
+    frame_done_creating.grid_rowconfigure(0, weight=1)
+    frame_done_creating.grid_rowconfigure(1, weight=1)
+    frame_done_creating.grid_columnconfigure(0, weight=1)
 
 WeighItDown()
 
@@ -586,12 +609,6 @@ root.mainloop()
 
 """
 This is here so I could see what to row/columnconfigure while making WeighItDown
-frame_home = tk.Frame(root, bg="black")
-frame_create = tk.Frame(root, bg="black")
-frame_study = tk.Frame(root, bg="black")
-frame_start_studying = tk.Frame(root, bg="black")
-frame_view = tk.Frame(root, bg="black")
-frame_image_side = tk.Frame(root, bg="black", width=750, height=996, borderwidth=0)
-frame_image_side2 = tk.Frame(root, bg="black", width=750, height=996, borderwidth=0)
-frame_image_create = tk.Frame(root, bg="black", width=750, height=996, borderwidth=0)
-frame_done_creating = tk.Frame(root, bg="black") """
+
+
+"""
