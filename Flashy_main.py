@@ -85,9 +85,10 @@ frame_done_creating = tk.Frame(root, bg="black")
 
 
 def quit_flashy():
-    pygame.mixer.music.load("Minecraft hurt.mp3")
-    pygame.mixer.music.play(loops=0)
-    root.after(200, root.destroy())
+    #if messagebox.askokcancel("Quit", "Do you want to quit?"):
+        pygame.mixer.music.load("Minecraft hurt.mp3")
+        pygame.mixer.music.play(loops=0)
+        root.after(200, root.destroy())
 
 
 def toggle_music():
@@ -255,11 +256,12 @@ def create_set():
     definition_label.grid(row=1, column=1, stick=tk.W, pady=10)
 
     new_term = tk.Button(frame_buttons_create, text="Add term", command=add_term, width=10, height=2, bg="#4c8151", borderwidth=0, font=("Helvetica", 15))
-    new_term.grid(row=3, column=0, sticky="w", padx=20, pady=25)
+    new_term.grid(row=0, column=0, sticky="w", padx=20, pady=25)
     root.bind("<Return>", lambda event: add_term())
 
     create_set_done = tk.Button(frame_buttons_create, text="Done", command=lambda:done_creating(title_entry.get()), width=10, height=2, bg="#4c8151", borderwidth=0, font=("Helvetica", 15))
-    create_set_done.grid(row=3, column=1, sticky="e", padx=850)
+    create_set_done.grid(row=0, column=1, sticky="e", padx=850)
+    root.bind("<+>", lambda event: done_creating(title_entry.get()))
 
     frame_image_create.grid(row=1, column=0, sticky=tk.E)
 
@@ -273,7 +275,13 @@ def create_set():
     first_entry_definition.grid(row=y, column=2, pady=20, padx=85)
 
     list_entries.append(first_entry_term)
-    list_entries.append(first_entry_definition)      
+    list_entries.append(first_entry_definition)
+
+    # give frames weight so resizes correctly
+    title_frame.grid_columnconfigure(0, weight=1)
+    title_frame.grid_columnconfigure(1, weight=1)
+    title_frame.grid_rowconfigure(0, weight=1)
+    title_frame.grid_rowconfigure(1, weight=1)
 
 
 def timer_thread(name, item, button, requested_time):
@@ -378,12 +386,22 @@ def continue_with_file(button):
 
     VisitSet = True
 
+    WidthVar = 22 / 1920
+    HeightVar = 2 / 997
+    width = int(root.winfo_width()) * WidthVar
+    width = int(round(width))
+    height = int(root.winfo_height()) * HeightVar
+    height = int(round(height))
+
+    PadVar = 10 / 1920
+    distance = int(root.winfo_width()) * PadVar
+    distance = int(round(distance))
+
     for line in opened_file.readlines():
         line = line.split(" | ")
         line[1] = line[1].rstrip("\n")
-
-        button_term = tk.Button(study_canvas_frame, text=line[0], width=22, height=2, bg="#4c8151", borderwidth=0, font=("Helvetica", 15))
-        button_term.grid(row=yvar, column=xvar, padx=10, pady=10)
+        button_term = tk.Button(study_canvas_frame, text=line[0], width=width, height=height, bg="#4c8151", borderwidth=0, font=("Helvetica", 15))
+        button_term.grid(row=yvar, column=xvar, padx=distance, pady=distance)
         button_term.bind("<Button-1>", show_def)
         list_buttons_answers.append(button_term)
         list_terms.append(line[0])
@@ -398,6 +416,14 @@ def continue_with_file(button):
     toplevel()
 
     VisitStudy = True
+
+    # give study_canvas_frame weight
+    columns = int(study_canvas_frame.grid_size()[0])
+    rows = int(study_canvas_frame.grid_size()[1])
+    for c in range(columns):
+        study_canvas_frame.grid_columnconfigure(c, weight=1)
+    for r in range(rows):
+        study_canvas_frame.grid_rowconfigure(r, weight=1)
 
 
 def select_set(files):
@@ -459,6 +485,10 @@ def view_sets():
 def home():
     # creates the home screen
     global homecount
+
+    root.columnconfigure(0, weight=1)
+    root.columnconfigure(2, weight=0)
+    root.rowconfigure(0, weight=1)
 
     main_menu.entryconfig("Home", state="disabled")
     main_menu.entryconfig("Study set", state="active")
@@ -604,11 +634,6 @@ def WeighItDown():
 
 WeighItDown()
 
+root.protocol("WM_DELETE_WINDOW", quit_flashy)
+
 root.mainloop()
-
-
-"""
-This is here so I could see what to row/columnconfigure while making WeighItDown
-
-
-"""
