@@ -284,11 +284,10 @@ def create_set():
     title_frame.grid_rowconfigure(1, weight=1)
 
 
-def timer_thread(name, item, button, requested_time):
-    button.config(bg="black", fg="#4c8151")
+def timer_thread(name, item, button, requested_time, index):
+    button.config(text=list_answers[index], bg="black", fg="#4c8151")
     time.sleep(requested_time)
-    button.config(text=item)
-    button.config(bg="#4c8151", fg="black")
+    button.config(text=item, bg="#4c8151", fg="black")
 
 
 def show_def(event):
@@ -297,13 +296,12 @@ def show_def(event):
         if button is event.widget:
             try:
                 index = list_terms.index(button["text"])
-                button.config(text=list_answers[index])
                 requested_time = int(time_wanted)
-                x = threading.Thread(target=timer_thread, args=(1, list_terms[index], list_buttons_answers[index], requested_time), daemon=True)
+                x = threading.Thread(target=timer_thread, args=(1, list_terms[index], list_buttons_answers[index], requested_time, index), daemon=True)
                 x.start()
             except:
-                home()
-                tk.messagebox.showerror("Something went wrong", "Something went wrong, perhaps you didn't fill in a time?")
+                if tk.messagebox.askokcancel("Something went wrong", "Something went wrong.\n\nPerhaps you didn't fill in a time or clicked a button while it was displaying an answer?\n\nDo you want to go back to the main menu:"):
+                    home()
 
 
 def enter_time(window, entry):
