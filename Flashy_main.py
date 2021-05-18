@@ -82,6 +82,7 @@ frame_image_side = tk.Frame(root, bg="black", width=750, height=996, borderwidth
 frame_image_side2 = tk.Frame(root, bg="black", width=750, height=996, borderwidth=0)
 frame_image_create = tk.Frame(frame_create, bg="black", width=750, height=996, borderwidth=0)
 frame_done_creating = tk.Frame(root, bg="black")
+frame_view_set = tk.Frame(root, bg="black")
 
 
 def quit_flashy():
@@ -467,17 +468,110 @@ def study_set():
                 they += 1
 
 
+def view_entry(term, definition):
+    global y, padcount, stringcount, create_canvas
+
+    entry_rank = tk.Label(frame_view_set, text=str(y+1), bg="black", fg="#4c8151")
+    entry_rank.grid(row=y+1, column=0)
+
+    new_entry_term = tk.Entry(frame_view_set, width=75, borderwidth=0, bg="#4c8151")
+    new_entry_term.grid(row=y+1, column=1, pady=20, padx=20)
+    new_entry_term.insert(0, term)
+
+    new_entry_definition = tk.Entry(frame_view_set, width=75, borderwidth=0, bg="#4c8151")
+    new_entry_definition.grid(row=y+1, column=2, pady=20, padx=85)
+    new_entry_definition.insert(0, definition)
+
+    list_entries_view.append(new_entry_term)
+    list_entries_view.append(new_entry_definition)
+
+    y += 1
+
+
+def save_edited_set(opened_file):
+    t = []
+    d = []
+    is_term = True
+    count = 0
+    
+    for item in list_entries_view:
+        if is_term:
+            t.append(item.get())   
+        elif is_term == False:
+            d.append(item.get())
+        is_term = not is_term
+    for item in t:
+        item_to_add = item + " | " + d[count]
+        write_list.append(item_to_add)
+        count += 1
+    opened_file = opened_file.strip(".txt")
+    writefile(opened_file)
+
+def view_selected_file(selected_button):
+    main_menu.add_command(label="Save changes", command=lambda: save_edited_set(text))
+    global list_entries_view
+    list_entries_view = []
+    text = selected_button["text"]
+    text1 = str(text + ".txt")
+    current_file = open(text1, "r")
+
+    WidthVar = 22 / 1920
+    HeightVar = 2 / 997
+    width = int(root.winfo_width()) * WidthVar
+    width = int(round(width))
+    height = int(root.winfo_height()) * HeightVar
+    height = int(round(height))
+
+    PadVar = 10 / 1920
+    distance = int(root.winfo_width()) * PadVar
+    distance = int(round(distance))
+    
+    clear_screen()
+    frame_view_set.grid(row=0, column=0)
+
+    for line in current_file:
+        line = line.split(" | ")
+        line[1] = line[1].rstrip("\n")
+        
+        view_entry(line[0], line[1])
+
+
+def view_all_sets(selected_file):
+    list_buttons_view = []
+    name_file = selected_file.replace(".txt", "")
+    button_view = tk.Button(frame_view, text=name_file, command=lambda: view_selected_file(button_view), width=20, height=2, bg="#4c8151", borderwidth=0, font=("Helvetica", 15))
+    button_view.grid(row=Yview, column=Xview, padx=10, pady=10)
+    list_buttons_view.append(button_view)
+
+
 def view_sets():
     # allows you to view all the sets you have
+    global Xview, Yview
     main_menu.entryconfig("Home", state="active")
     main_menu.entryconfig("Study set", state="disabled")
     main_menu.entryconfig("Create set", state="disabled")
     main_menu.entryconfig("View sets", state="disabled")
 
+    Xview = 0
+    Yview = 0
+
     click.play()
 
     clear_screen()
     frame_view.grid(row=0, column=0)
+    
+    dirname = os.getcwd()
+
+    ext = (".txt")
+    for files in os.listdir(dirname):
+        if files.endswith(ext):
+            view_all_sets(files)
+
+            if (Xview - 6) < 0:
+                Xview += 1
+            else:
+                Xview = Xview - 6
+                Yview += 1
 
 
 def home():
@@ -624,6 +718,16 @@ def WeighItDown():
 
     # frame view
     frame_view.grid_columnconfigure(0, weight=1)
+    frame_view.grid_columnconfigure(1, weight=1)
+    frame_view.grid_columnconfigure(2, weight=1)
+    frame_view.grid_columnconfigure(3, weight=1)
+    frame_view.grid_columnconfigure(4, weight=1)
+    frame_view.grid_columnconfigure(5, weight=1)
+    frame_view.grid_columnconfigure(6, weight=1)
+    frame_view.grid_rowconfigure(0, weight=1)
+    frame_view.grid_rowconfigure(1, weight=1)
+    frame_view.grid_rowconfigure(2, weight=1)
+    frame_view.grid_rowconfigure(3, weight=1)
 
     # frame done creating
     frame_done_creating.grid_rowconfigure(0, weight=1)
