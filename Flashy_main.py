@@ -1,3 +1,4 @@
+#I messed something up severly with giving things weight, will continue other time
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
@@ -346,6 +347,7 @@ def toplevel():
 
 def continue_with_file(button):
     global list_buttons_answers, list_terms, VisitStudy, list_answers, frame_start_studying2, VisitSet
+
     list_buttons_answers = []
     list_terms = []
     list_answers = []
@@ -360,9 +362,6 @@ def continue_with_file(button):
 
     clear_screen()
     frame_start_studying.grid(row=0, column=0, sticky=tk.NSEW)
-
-    root.grid_columnconfigure(0, weight=1)
-    root.grid_rowconfigure(0, weight=1)
     
     frame_start_studying2 = tk.Frame(frame_start_studying, bg="black")
     frame_start_studying2.pack(fill=tk.BOTH, expand=1)
@@ -471,14 +470,14 @@ def study_set():
 def view_entry(term, definition):
     global y, padcount, stringcount, create_canvas
 
-    entry_rank = tk.Label(frame_view_set, text=str(y+1), bg="black", fg="#4c8151")
+    entry_rank = tk.Label(view_canvas_frame, text=str(y+1), bg="black", fg="#4c8151")
     entry_rank.grid(row=y+1, column=0)
 
-    new_entry_term = tk.Entry(frame_view_set, width=75, borderwidth=0, bg="#4c8151")
+    new_entry_term = tk.Entry(view_canvas_frame, width=75, borderwidth=0, bg="#4c8151")
     new_entry_term.grid(row=y+1, column=1, pady=20, padx=20)
     new_entry_term.insert(0, term)
 
-    new_entry_definition = tk.Entry(frame_view_set, width=75, borderwidth=0, bg="#4c8151")
+    new_entry_definition = tk.Entry(view_canvas_frame, width=75, borderwidth=0, bg="#4c8151")
     new_entry_definition.grid(row=y+1, column=2, pady=20, padx=85)
     new_entry_definition.insert(0, definition)
 
@@ -507,9 +506,13 @@ def save_edited_set(opened_file):
     opened_file = opened_file.strip(".txt")
     writefile(opened_file)
 
+
 def view_selected_file(selected_button):
+    global list_entries_view, view_canvas_frame
+
+    click.play()
     main_menu.add_command(label="Save changes", command=lambda: save_edited_set(text))
-    global list_entries_view
+    
     list_entries_view = []
     text = selected_button["text"]
     text1 = str(text + ".txt")
@@ -529,6 +532,26 @@ def view_selected_file(selected_button):
     clear_screen()
     frame_view_set.grid(row=0, column=0)
 
+    frame_view_set1 = tk.Frame(frame_view_set, bg="black")
+    frame_view_set1.pack(fill=tk.BOTH, expand=1)
+
+    view_canvas = tk.Canvas(frame_view_set1)
+    view_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
+    view_canvas.bind_all("<MouseWheel>", lambda event: on_mousewheel(event, view_canvas))
+
+    view_scrollbar = ttk.Scrollbar(frame_view_set1, orient=tk.VERTICAL, command=view_canvas.yview)
+    view_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+    view_canvas.configure(yscrollcommand=view_scrollbar.set)
+    view_canvas.bind("<Configure>", lambda e: view_canvas.configure(scrollregion=view_canvas.bbox("all")))
+
+    view_canvas_frame = tk.Frame(view_canvas, bg="black")
+
+    view_canvas.create_window((0,0), window=view_canvas_frame, anchor="nw")
+
+    view_canvas_frame.bind("<Configure>", lambda self: reset_scrollregion(self, view_canvas))
+
+
     for line in current_file:
         line = line.split(" | ")
         line[1] = line[1].rstrip("\n")
@@ -547,6 +570,11 @@ def view_all_sets(selected_file):
 def view_sets():
     # allows you to view all the sets you have
     global Xview, Yview
+
+    root.columnconfigure(0, weight=1)
+    root.columnconfigure(2, weight=0)
+    root.rowconfigure(0, weight=0)
+
     main_menu.entryconfig("Home", state="active")
     main_menu.entryconfig("Study set", state="disabled")
     main_menu.entryconfig("Create set", state="disabled")
