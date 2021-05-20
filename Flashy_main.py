@@ -1,4 +1,3 @@
-#I messed something up severly with giving things weight, will continue other time
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
@@ -348,6 +347,8 @@ def toplevel():
 def continue_with_file(button):
     global list_buttons_answers, list_terms, VisitStudy, list_answers, frame_start_studying2, VisitSet
 
+    root.rowconfigure(0, weight=1)
+
     list_buttons_answers = []
     list_terms = []
     list_answers = []
@@ -510,6 +511,16 @@ def save_edited_set(opened_file):
 def view_selected_file(selected_button):
     global list_entries_view, view_canvas_frame
 
+    columns = int(root.grid_size()[0])
+    rows = int(root.grid_size()[1])
+    for c in range(columns):
+        root.grid_columnconfigure(c, weight=0)
+    for r in range(rows):
+        root.grid_rowconfigure(r, weight=0)
+    
+    root.grid_rowconfigure(0, weight=1)
+    root.grid_columnconfigure(0, weight=1)
+
     click.play()
     main_menu.add_command(label="Save changes", command=lambda: save_edited_set(text))
     
@@ -534,6 +545,9 @@ def view_selected_file(selected_button):
 
     frame_view_set1 = tk.Frame(frame_view_set, bg="black")
     frame_view_set1.pack(fill=tk.BOTH, expand=1)
+
+    frame_view_set1.grid_rowconfigure(0, weight=1)
+    frame_view_set1.grid_columnconfigure(0, weight=1)
 
     view_canvas = tk.Canvas(frame_view_set1)
     view_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
