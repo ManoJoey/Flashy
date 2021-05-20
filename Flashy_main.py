@@ -14,11 +14,14 @@ pygame.mixer.music.play(-1)
 pygame.mixer.music.pause()
 
 click = pygame.mixer.Sound("Mouse Click.mp3")
+finish_sound = pygame.mixer.Sound("Party horn.mp3")
+new_card_sound = pygame.mixer.Sound("Swipe.mp3")
 
 homecount = 0
 y = 0
 VisitStudy = False
 VisitSet = False
+VisitView = False
 write_list = []
 read_list = []
 list_entries = []
@@ -60,7 +63,7 @@ def writefile(file_name):
     file_delete.write("")
     for item in write_list:
         item = str(item) + "\n"
-        file_write.write(item)
+        file_delete.write(item)
     file_write.close()
     file_delete.close()
 
@@ -83,6 +86,7 @@ frame_image_side2 = tk.Frame(root, bg="black", width=750, height=996, borderwidt
 frame_image_create = tk.Frame(frame_create, bg="black", width=750, height=996, borderwidth=0)
 frame_done_creating = tk.Frame(root, bg="black")
 frame_view_set = tk.Frame(root, bg="black")
+frame_done_view = tk.Frame(root, bg="black")
 
 
 def quit_flashy():
@@ -113,9 +117,13 @@ def clear_screen():
     frame_done_creating.grid_forget()
     frame_view.grid_forget()
     frame_start_studying.grid_forget()
+    frame_done_view.grid_forget()
     if VisitSet:
         frame_start_studying2.pack_forget()
-
+    if VisitView:
+        frame_view_set.grid_forget()
+        save_changes.grid_forget()
+        add_item_b.grid_forget()
 
 def done_creating(title_set):
     if title_set != "Enter the title of your set here...":
@@ -144,7 +152,6 @@ def done_creating(title_set):
             write_list.append(line)
         title_set = title_entry.get()
         writefile(title_set)
-        finish_sound = pygame.mixer.Sound("Party horn.mp3")
         finish_sound.play()
         clear_screen()
         list_entries = []
@@ -160,9 +167,8 @@ def done_creating(title_set):
 
 
 def add_term():
-    global y, padcount, stringcount, create_canvas
+    global y, padcount, create_canvas
     
-    new_card_sound = pygame.mixer.Sound("Swipe.mp3")
     new_card_sound.play()
 
     entry_rank = tk.Label(second_frame, text=str(y+2), bg="black", fg="#4c8151")
@@ -469,7 +475,7 @@ def study_set():
 
 
 def view_entry(term, definition):
-    global y, padcount, stringcount, create_canvas
+    global y, padcount, create_canvas
 
     entry_rank = tk.Label(view_canvas_frame, text=str(y+1), bg="black", fg="#4c8151")
     entry_rank.grid(row=y+1, column=0)
@@ -507,9 +513,33 @@ def save_edited_set(opened_file):
     opened_file = opened_file.strip(".txt")
     writefile(opened_file)
 
+    clear_screen()
+    finish_sound.play()
+
+    frame_done_view.grid(row=0, column=0)
+    label_done_view = tk.Label(frame_done_view, text="Your changes have been saved!\nUse the menu to go back to the homepage.", fg="#4c8151", font=("Helvetica", 30), bg="black")
+    label_done_view.grid(row=0, column=0)
+    image_done_label2.grid(row=1, column=0, pady=100)
+
+
+def add_item():
+    new_card_sound.play()
+    row = int(view_canvas_frame.grid_size()[1])
+
+    rank = tk.Label(view_canvas_frame, text=str(row), bg="black", fg="#4c8151")
+    rank.grid(row=row, column=0)
+
+    new_entry0 = tk.Entry(view_canvas_frame, width=75, borderwidth=0, bg="#4c8151")
+    new_entry0.grid(row=row, column=1, pady=20, padx=20)
+    list_entries_view.append(new_entry0)
+
+    new_entry1 = tk.Entry(view_canvas_frame, width=75, borderwidth=0, bg="#4c8151")
+    new_entry1.grid(row=row, column=2, pady=20, padx=85)
+    list_entries_view.append(new_entry1)
+
 
 def view_selected_file(selected_button):
-    global list_entries_view, view_canvas_frame
+    global list_entries_view, view_canvas_frame, VisitView, y, save_changes, add_item_b
 
     columns = int(root.grid_size()[0])
     rows = int(root.grid_size()[1])
@@ -522,7 +552,6 @@ def view_selected_file(selected_button):
     root.grid_columnconfigure(0, weight=1)
 
     click.play()
-    main_menu.add_command(label="Save changes", command=lambda: save_edited_set(text))
     
     list_entries_view = []
     text = selected_button["text"]
@@ -541,15 +570,12 @@ def view_selected_file(selected_button):
     distance = int(round(distance))
     
     clear_screen()
-    frame_view_set.grid(row=0, column=0)
+    frame_view_set.grid(row=0, column=0, sticky=tk.NSEW)
 
     frame_view_set1 = tk.Frame(frame_view_set, bg="black")
     frame_view_set1.pack(fill=tk.BOTH, expand=1)
 
-    frame_view_set1.grid_rowconfigure(0, weight=1)
-    frame_view_set1.grid_columnconfigure(0, weight=1)
-
-    view_canvas = tk.Canvas(frame_view_set1)
+    view_canvas = tk.Canvas(frame_view_set1, bg="black")
     view_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
     view_canvas.bind_all("<MouseWheel>", lambda event: on_mousewheel(event, view_canvas))
 
@@ -557,13 +583,20 @@ def view_selected_file(selected_button):
     view_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
     view_canvas.configure(yscrollcommand=view_scrollbar.set)
-    view_canvas.bind("<Configure>", lambda e: view_canvas.configure(scrollregion=view_canvas.bbox("all")))
+    view_canvas.bind("<Configure>", lambda event: view_canvas.configure(scrollregion=view_canvas.bbox("all")))
 
     view_canvas_frame = tk.Frame(view_canvas, bg="black")
 
-    view_canvas.create_window((0,0), window=view_canvas_frame, anchor="nw")
+    view_canvas.create_window((0, 0), window=view_canvas_frame, anchor="nw")
 
     view_canvas_frame.bind("<Configure>", lambda self: reset_scrollregion(self, view_canvas))
+
+    save_changes = tk.Button(root, text="Save changes", command=lambda: save_edited_set(text), width=15, height=2, bg="#4c8151", borderwidth=0, font=("Helvetica", 15))
+    save_changes.grid(row=1, column=0, sticky=tk.W, pady=20, padx=30)
+
+    add_item_b = tk.Button(root, text="Add term", command=add_item, width=15, height=2, bg="#4c8151", borderwidth=0, font=("Helvetica", 15))
+    add_item_b.grid(row=1, column=0, sticky=tk.E, pady=20, padx=30)
+    root.bind("<Return>", lambda event: add_item())
 
 
     for line in current_file:
@@ -571,6 +604,10 @@ def view_selected_file(selected_button):
         line[1] = line[1].rstrip("\n")
         
         view_entry(line[0], line[1])
+    
+    y = 0
+    
+    VisitView = True
 
 
 def view_all_sets(selected_file):
@@ -644,6 +681,10 @@ def home():
     if VisitStudy:
         for button in list_buttons_answers:
             button.destroy()
+    
+    if VisitView:
+        for child in frame_view_set.winfo_children():
+            child.destroy()
 
     frame_image_side.grid(row=0, column=0)
     frame_home.grid(row=0, column=1)
@@ -721,6 +762,7 @@ image_done = Image.open("Check mark.png")
 image_done = image_done.resize((500, 500), Image.ANTIALIAS)
 image_done_full = ImageTk.PhotoImage(image_done)
 image_done_label = tk.Label(frame_done_creating, image=image_done_full, bg="black")
+image_done_label2 = tk.Label(frame_done_view, image=image_done_full, bg="black")
 
 def WeighItDown():
     root.grid_columnconfigure(0, weight=1)
