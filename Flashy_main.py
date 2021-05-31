@@ -69,7 +69,7 @@ def writefile(file_name):
 
 
 root = tk.Tk()
-root.geometry("-2000-0")
+#root.geometry("-2000-0")
 root.title("Flashy")
 root.iconbitmap("F.ico")
 root.state('zoomed')
@@ -686,33 +686,33 @@ def home():
         for child in frame_view_set.winfo_children():
             child.destroy()
 
-    frame_image_side.grid(row=0, column=0)
-    frame_home.grid(row=0, column=1)
-    frame_image_side2.grid(row=0, column=2)
+    frame_image_side.grid(row=0, column=0, sticky="nsew")
+    frame_home.grid(row=0, column=1, sticky="nsew")
+    frame_image_side2.grid(row=0, column=2, sticky="nsew")
 
     whitespace = tk.Label(frame_home, text="", bg="black", height=3)
-    whitespace.grid(row=0, column=1)
+    whitespace.grid(row=0, column=0, sticky="nsew")
 
     welcome_label = tk.Label(frame_home, text="Welcome!", font=("Helvetica", 80), fg="#4c8151", bg="black")
-    welcome_label.grid(row=1, column=1, columnspan=3, pady=20)
+    welcome_label.grid(row=1, column=0, columnspan=3, pady=20, sticky="nsew")
 
     today = str(date.today().strftime("%d-%b-%Y"))
     today_date = tk.Label(frame_home, text=today, bg="black", fg="#4c8151", font=("Helvetica", 50))
-    today_date.grid(row=2, column=1, padx=35)
+    today_date.grid(row=2, column=0, padx=35, sticky="nsew")
 
-    whitespace.grid(row=3, column=1)
+    whitespace.grid(row=3, column=0)
 
     button_create = tk.Button(frame_home, text="Create new study set", width=25, height=4, borderwidth=0, font=("Helvetica", 20), bg="#4c8151", command=create_set)
-    button_create.grid(row=4, column=1, padx=8)
+    button_create.grid(row=4, column=0, padx=8, sticky="nsew")
 
     start_studying = tk.Button(frame_home, text="Study a set", width=25, height=4, borderwidth=0, font=("Helvetica", 20), bg="#4c8151", command=study_set)
-    start_studying.grid(row=5, column=1, pady=5, padx=8)
+    start_studying.grid(row=5, column=0, pady=5, padx=8, sticky="nsew")
 
     view_sets_button = tk.Button(frame_home, text="View your sets", width=25, height=4, borderwidth=0, font=("Helvetica", 20), bg="#4c8151", command=view_sets)
-    view_sets_button.grid(row=6, column=1)
+    view_sets_button.grid(row=6, column=0, sticky="nsew")
 
     exit_button = tk.Button(frame_home, text="Exit", width=25, height=3, borderwidth=0, font=("Helvetica", 20), bg="#4c8151", command=quit_flashy)
-    exit_button.grid(row=7, column=1, pady=70)
+    exit_button.grid(row=7, column=0, pady=70, sticky="nsew")
 
 
 # all the menu options
